@@ -15,11 +15,7 @@ class RepositoryImpl @Inject constructor(
         return service.getData()
             .singleOrError()
             .map { response ->
-                if (response.list.isNullOrEmpty()) {
-                    throw Exception("Error loading data")
-                } else {
-                    mapper.transform(response)
-                }
+                mapper.transform(response)
             }
     }
 }

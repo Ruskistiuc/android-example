@@ -2,7 +2,6 @@ package com.example.androidexample.data
 
 import com.example.androidexample.data.mapper.DomainObjectMapper
 import com.example.androidexample.data.models.Joke
-import com.example.androidexample.data.models.Response
 import com.example.androidexample.domain.Repository
 import com.example.androidexample.domain.models.DomainObject
 import io.reactivex.rxjava3.core.Observable
@@ -38,42 +37,23 @@ class RepositoryImplTest {
     @Test
     fun `GIVEN repository WHEN data requested successfully THEN transformed data should be returned`() {
         // Arrange
-        val response = mock<Response>()
-        given(service.getData()).willReturn(Observable.just(response))
+        val list = listOf<Joke>(mock())
+        given(service.getData()).willReturn(Observable.just(list))
 
-        val responseList = listOf<Joke>(mock())
-        given(response.list).willReturn(responseList)
-
-        val list = listOf<DomainObject>(mock())
-        given(mapper.transform(response)).willReturn(list)
+        val transformedList = listOf<DomainObject>(mock())
+        given(mapper.transform(list)).willReturn(transformedList)
 
         // Act
         val dataObserver: TestObserver<List<DomainObject>> = repository.getData().test()
 
         // Assert
-        assertThat(dataObserver.values().first()).isEqualTo(list)
+        assertThat(dataObserver.values().first()).isEqualTo(transformedList)
     }
 
     @Test
-    fun `GIVEN repository WHEN data requested is null THEN should throw an exception`() {
+    fun `GIVEN repository WHEN data requested with error THEN should throw an exception`() {
         // Arrange
-        val response = mock<Response>()
-        given(response.list).willReturn(null)
-        given(service.getData()).willReturn(Observable.just(response))
-
-        // Act
-        val dataObserver: TestObserver<List<DomainObject>> = repository.getData().test()
-
-        // Assert
-        dataObserver.assertError(Exception::class.java)
-    }
-
-    @Test
-    fun `GIVEN repository WHEN data requested is empty THEN should throw an exception`() {
-        // Arrange
-        val response = mock<Response>()
-        given(response.list).willReturn(emptyList())
-        given(service.getData()).willReturn(Observable.just(response))
+        given(service.getData()).willReturn(Observable.error(Exception()))
 
         // Act
         val dataObserver: TestObserver<List<DomainObject>> = repository.getData().test()
