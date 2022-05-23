@@ -1,7 +1,7 @@
 package com.example.androidexample.di
 
-import com.example.androidexample.data.RepositoryImpl
-import com.example.androidexample.domain.Repository
+import com.example.androidexample.domain.UseCase
+import com.example.androidexample.domain.UseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -10,11 +10,9 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
 @InstallIn(ViewModelComponent::class)
-abstract class RepositoryModule {
+abstract class UseCaseModule {
 
     @ViewModelScoped
     @Binds
-    abstract fun bindRepository(
-        repository: RepositoryImpl
-    ): Repository
+    abstract fun bindUseCase(useCase: UseCaseImpl): UseCase
 }
