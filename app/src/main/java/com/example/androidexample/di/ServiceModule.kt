@@ -32,7 +32,7 @@ abstract class ServiceModule {
         @Provides
         fun provideService(): Service {
             return Retrofit.Builder()
-                .baseUrl("https://karljoke.herokuapp.com/jokes/")
+                .baseUrl("https://v2.jokeapi.dev/joke/")
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
