@@ -1,7 +1,7 @@
 package com.example.androidexample.data
 
 import com.example.androidexample.data.mapper.DomainObjectMapper
-import com.example.androidexample.data.models.Joke
+import com.example.androidexample.data.models.Response
 import com.example.androidexample.domain.Repository
 import com.example.androidexample.domain.models.DomainObject
 import io.reactivex.rxjava3.core.Observable
@@ -37,11 +37,11 @@ class RepositoryImplTest {
     @Test
     fun `GIVEN repository WHEN data requested successfully THEN transformed data should be returned`() {
         // Arrange
-        val list = listOf<Joke>(mock())
-        given(service.getData()).willReturn(Observable.just(list))
+        val response = mock<Response>()
+        given(service.getData()).willReturn(Observable.just(response))
 
         val transformedList = listOf<DomainObject>(mock())
-        given(mapper.transform(list)).willReturn(transformedList)
+        given(mapper.transform(response)).willReturn(transformedList)
 
         // Act
         val dataObserver: TestObserver<List<DomainObject>> = repository.getData().test()

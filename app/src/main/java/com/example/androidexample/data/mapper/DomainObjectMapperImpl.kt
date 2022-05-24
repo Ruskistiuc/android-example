@@ -1,16 +1,17 @@
 package com.example.androidexample.data.mapper
 
-import com.example.androidexample.data.models.Joke
+import com.example.androidexample.data.models.Response
 import com.example.androidexample.domain.models.DomainObject
 import javax.inject.Inject
 
 class DomainObjectMapperImpl @Inject constructor() : DomainObjectMapper {
 
-    override fun transform(list: List<Joke>): List<DomainObject> {
-        return list.map { item ->
+    override fun transform(response: Response): List<DomainObject> {
+        return response.jokes.map { item ->
             DomainObject(
+                joke = item.joke,
                 setup = item.setup,
-                punchline = item.punchline
+                delivery = item.delivery
             )
         }
     }
