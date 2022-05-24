@@ -25,7 +25,7 @@ class UseCaseImplTest {
     @Test
     fun `GIVEN use case WHEN data requested successfully THEN should return list of domain objects`() {
         // Arrange
-        val data = listOf<DomainObject>(mock())
+        val data: List<DomainObject> = mock()
         given(repository.getData()).willReturn(Single.just(data))
 
         // Act

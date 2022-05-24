@@ -1,3 +1,7 @@
 package com.example.androidexample.domain.models
 
-data class DomainObject(val setup: String, val punchline: String)
+data class DomainObject(
+    val joke: String?,
+    val setup: String?,
+    val delivery: String?
+)
