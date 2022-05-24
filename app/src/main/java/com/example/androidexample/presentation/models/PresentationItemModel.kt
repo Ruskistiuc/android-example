@@ -1,3 +1,7 @@
 package com.example.androidexample.presentation.models
 
-data class PresentationItemModel(val setup: String, val punchline: String)
+data class PresentationItemModel(
+    val joke: String?,
+    val setup: String?,
+    val delivery: String?
+)

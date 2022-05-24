@@ -3,7 +3,7 @@ package com.example.androidexample.presentation
 import androidx.lifecycle.ViewModel
 import com.example.androidexample.domain.UseCase
 import com.example.androidexample.domain.models.DomainObject
-import com.example.androidexample.presentation.models.PresentationItemModel
+import com.example.androidexample.presentation.mapper.PresentationModelMapper
 import com.example.androidexample.presentation.models.PresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -16,7 +16,10 @@ import javax.inject.Inject
  * Therefore, Hilt must also know how to provide the instance of UseCase.
  * */
 @HiltViewModel
-class MainViewModel @Inject constructor(useCase: UseCase) : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val useCase: UseCase,
+    private val mapper: PresentationModelMapper
+) : ViewModel() {
 
     val model: Observable<PresentationModel>
 
@@ -29,47 +32,43 @@ class MainViewModel @Inject constructor(useCase: UseCase) : ViewModel() {
         error = false
     )
 
+    private val onclickRetry: () -> Unit = {
+        events.onNext(Event.OnOpen)
+    }
+
     init {
         model = events
             .startWithItem(Event.OnOpen)
             .publish { event ->
-                event.ofType(Event.OnOpen::class.java)
-                    .withLatestFrom(
-                        states.startWithItem(initialState)
-                    ) { _, state -> state }
-                    .switchMap { state ->
-                        if (state.data.isEmpty()) {
-                            useCase.getData()
-                                .toObservable()
-                                .map { data ->
-                                    state.setData(data)
-                                }
-                                .startWithItem(state.loading())
-                                .onErrorReturn { state.error() }
-                        } else {
-                            Observable.just(state)
+                Observable.mergeArray(
+                    event.ofType(Event.OnOpen::class.java)
+                        .withLatestFrom(
+                            states.startWithItem(initialState)
+                        ) { _, state -> state }
+                        .switchMap { state ->
+                            if (state.data.isEmpty()) {
+                                useCase.getData()
+                                    .toObservable()
+                                    .map { data ->
+                                        state.setData(data)
+                                    }
+                                    .startWithItem(state.loading())
+                                    .onErrorReturn { state.error() }
+                            } else {
+                                Observable.just(state)
+                            }
                         }
-                    }
+                )
             }
             .doOnNext { state ->
                 states.onNext(state)
             }
             .map { state ->
-                getModel(state)
-            }
-    }
-
-    private fun getModel(state: State): PresentationModel {
-        return PresentationModel(
-            items = state.data.map { item ->
-                PresentationItemModel(
-                    setup = item.setup,
-                    punchline = item.punchline
+                mapper.transform(
+                    state = state,
+                    onclickRetry = onclickRetry
                 )
-            },
-            isLoading = state.loading,
-            isError = state.error
-        )
+            }
     }
 
     sealed class Event {

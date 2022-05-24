@@ -26,11 +26,11 @@ fun MainScreen(model: PresentationModel) {
 
     Surface {
         when {
-            model.isLoading -> {
+            model.loading -> {
                 Loading()
             }
-            model.isError -> {
-                // TODO(Implement retry mechanism)
+            model.error -> {
+                Error(onClickRetry = model.onClickRetry)
             }
             else -> {
                 LazyColumn(
@@ -62,18 +62,31 @@ private fun ListItem(item: PresentationItemModel) {
                 .fillMaxWidth()
                 .padding(AndroidExampleTheme.paddings.padding_m)
         ) {
-            Text(
-                text = item.setup,
-                fontWeight = FontWeight.Bold,
-                style = AndroidExampleTheme.typography.subtitle1,
-                modifier = Modifier.padding(AndroidExampleTheme.paddings.padding_xs)
-            )
+            item.joke?.let { joke ->
+                Text(
+                    text = joke,
+                    fontWeight = FontWeight.Bold,
+                    style = AndroidExampleTheme.typography.subtitle1,
+                    modifier = Modifier.padding(AndroidExampleTheme.paddings.padding_xs)
+                )
+            }
 
-            Text(
-                text = item.punchline,
-                style = AndroidExampleTheme.typography.body1,
-                modifier = Modifier.padding(AndroidExampleTheme.paddings.padding_xs)
-            )
+            item.setup?.let { setup ->
+                Text(
+                    text = setup,
+                    fontWeight = FontWeight.Bold,
+                    style = AndroidExampleTheme.typography.subtitle1,
+                    modifier = Modifier.padding(AndroidExampleTheme.paddings.padding_xs)
+                )
+            }
+
+            item.delivery?.let { delivery ->
+                Text(
+                    text = delivery,
+                    style = AndroidExampleTheme.typography.body1,
+                    modifier = Modifier.padding(AndroidExampleTheme.paddings.padding_xs)
+                )
+            }
         }
     }
 }
@@ -82,10 +95,17 @@ private fun ListItem(item: PresentationItemModel) {
 @Composable
 fun ListItemPreview() {
     AndroidExampleTheme {
-        ListItem(
-            item = PresentationItemModel(
-                setup = "Text 1", punchline = "Text 2"
+        Column {
+            ListItem(
+                item = PresentationItemModel(
+                    joke = null, setup = "Text 1", delivery = "Text 2"
+                )
             )
-        )
+            ListItem(
+                item = PresentationItemModel(
+                    joke = "Joke 1", setup = null, delivery = null
+                )
+            )
+        }
     }
 }
