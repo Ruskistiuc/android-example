@@ -1,5 +1,6 @@
 package com.example.androidexample.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.androidexample.domain.UseCase
 import com.example.androidexample.domain.models.DomainObject
@@ -21,6 +22,10 @@ class MainViewModel @Inject constructor(
     private val mapper: PresentationModelMapper
 ) : ViewModel() {
 
+    companion object {
+        private const val TAG = "MainViewModel"
+    }
+
     val model: Observable<PresentationModel>
 
     private val events = BehaviorSubject.create<Event>()
@@ -33,6 +38,8 @@ class MainViewModel @Inject constructor(
     )
 
     private val onclickRetry: () -> Unit = {
+        Log.i(TAG, "On click retry button was triggered")
+
         events.onNext(Event.OnOpen)
     }
 
@@ -50,10 +57,15 @@ class MainViewModel @Inject constructor(
                                 useCase.getData()
                                     .toObservable()
                                     .map { data ->
+                                        Log.i(TAG, "Event.OnOpen: Data fetched successfully")
                                         state.setData(data)
                                     }
                                     .startWithItem(state.loading())
-                                    .onErrorReturn { state.error() }
+                                    .onErrorReturn { error ->
+                                        Log.e(TAG, "Event.OnOpen: Failed to fetch the data: $error")
+
+                                        state.error()
+                                    }
                             } else {
                                 Observable.just(state)
                             }
