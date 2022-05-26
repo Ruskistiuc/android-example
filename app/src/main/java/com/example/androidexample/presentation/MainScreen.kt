@@ -13,12 +13,15 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androidexample.presentation.models.PresentationItemModel
 import com.example.androidexample.presentation.models.PresentationModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
+import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
+import com.example.androidexample.util.MAIN_SCREEN_LIST_ITEM
 
 @Composable
 fun MainScreen(model: PresentationModel) {
@@ -40,7 +43,8 @@ fun MainScreen(model: PresentationModel) {
                     ),
                     verticalArrangement = Arrangement.spacedBy(
                         space = AndroidExampleTheme.paddings.padding_l
-                    )
+                    ),
+                    modifier = Modifier.testTag(MAIN_SCREEN_ITEMS_LIST)
                 ) {
                     items(items = model.items) { i ->
                         ListItem(i)
@@ -55,7 +59,8 @@ fun MainScreen(model: PresentationModel) {
 private fun ListItem(item: PresentationItemModel) {
     Card(
         elevation = 3.dp,
-        shape = AndroidExampleTheme.shapes.medium
+        shape = AndroidExampleTheme.shapes.medium,
+        modifier = Modifier.testTag(MAIN_SCREEN_LIST_ITEM)
     ) {
         Column(
             modifier = Modifier
