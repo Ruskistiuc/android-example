@@ -6,8 +6,10 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.androidexample.ui.theme.AndroidExampleTheme
+import com.example.androidexample.util.LOADING_VIEW_LOADING_INDICATOR
 
 @Composable
 fun Loading() {
@@ -16,7 +18,8 @@ fun Loading() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            color = AndroidExampleTheme.colors.onBackground
+            color = AndroidExampleTheme.colors.onBackground,
+            modifier = Modifier.testTag(LOADING_VIEW_LOADING_INDICATOR)
         )
     }
 }
