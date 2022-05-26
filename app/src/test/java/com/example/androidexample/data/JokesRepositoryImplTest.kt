@@ -2,7 +2,7 @@ package com.example.androidexample.data
 
 import com.example.androidexample.data.mapper.DomainObjectMapper
 import com.example.androidexample.data.models.Response
-import com.example.androidexample.domain.Repository
+import com.example.androidexample.domain.JokesRepository
 import com.example.androidexample.domain.models.DomainObject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.observers.TestObserver
@@ -19,16 +19,16 @@ import org.mockito.kotlin.mock
  * of the framework is correct and simplifies the initialization of your mock objects.
  */
 @RunWith(MockitoJUnitRunner::class)
-class RepositoryImplTest {
+class JokesRepositoryImplTest {
 
-    private val service = mock<Service>()
+    private val service = mock<JokesService>()
     private val mapper = mock<DomainObjectMapper>()
 
-    private lateinit var repository: Repository
+    private lateinit var repository: JokesRepository
 
     @Before
     fun setup() {
-        repository = RepositoryImpl(
+        repository = JokesRepositoryImpl(
             service = service,
             mapper = mapper
         )

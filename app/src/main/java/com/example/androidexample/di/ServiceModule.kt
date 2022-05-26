@@ -1,6 +1,6 @@
 package com.example.androidexample.di
 
-import com.example.androidexample.data.Service
+import com.example.androidexample.data.JokesService
 import com.example.androidexample.data.mapper.DomainObjectMapper
 import com.example.androidexample.data.mapper.DomainObjectMapperImpl
 import com.example.androidexample.di.ServiceModule.RetrofitModule
@@ -30,13 +30,13 @@ abstract class ServiceModule {
 
         @Singleton
         @Provides
-        fun provideService(): Service {
+        fun provideService(): JokesService {
             return Retrofit.Builder()
                 .baseUrl("https://v2.jokeapi.dev/joke/")
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(Service::class.java)
+                .create(JokesService::class.java)
         }
     }
 }

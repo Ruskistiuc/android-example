@@ -12,14 +12,14 @@ import org.mockito.kotlin.given
 import org.mockito.kotlin.mock
 
 @RunWith(MockitoJUnitRunner::class)
-class UseCaseImplTest {
+class JokesUseCaseImplTest {
 
-    private val repository = mock<Repository>()
-    private lateinit var useCase: UseCase
+    private val repository = mock<JokesRepository>()
+    private lateinit var useCase: JokesUseCase
 
     @Before
     fun setup() {
-        useCase = UseCaseImpl(repository)
+        useCase = JokesUseCaseImpl(repository)
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.example.androidexample.di
 
-import com.example.androidexample.data.RepositoryImpl
-import com.example.androidexample.domain.Repository
+import com.example.androidexample.data.JokesRepositoryImpl
+import com.example.androidexample.domain.JokesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,6 +15,6 @@ abstract class RepositoryModule {
     @ViewModelScoped
     @Binds
     abstract fun bindRepository(
-        repository: RepositoryImpl
-    ): Repository
+        repository: JokesRepositoryImpl
+    ): JokesRepository
 }

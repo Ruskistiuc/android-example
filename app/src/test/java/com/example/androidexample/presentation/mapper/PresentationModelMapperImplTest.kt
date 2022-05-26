@@ -3,6 +3,7 @@ package com.example.androidexample.presentation.mapper
 import com.example.androidexample.domain.models.DomainObject
 import com.example.androidexample.presentation.MainViewModel.State
 import com.example.androidexample.presentation.models.PresentationItemModel
+import com.example.androidexample.presentation.models.PresentationModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -37,26 +38,31 @@ class PresentationModelMapperImplTest {
         given(state.loading).willReturn(true)
         given(state.error).willReturn(false)
 
+        val onClickRetry = mock<() -> Unit>()
+
         // Act
-        val mapped = mapper.transform(state, mock())
+        val mapped = mapper.transform(state, onClickRetry)
 
         // Assert
-        assertThat(mapped.items).isEqualTo(
-            listOf(
-                PresentationItemModel(
-                    joke = "joke",
-                    setup = null,
-                    delivery = null
+        assertThat(mapped).isEqualTo(
+            PresentationModel(
+                items = listOf(
+                    PresentationItemModel(
+                        joke = "joke",
+                        setup = null,
+                        delivery = null
+                    ),
+                    PresentationItemModel(
+                        joke = null,
+                        setup = "setup",
+                        delivery = "delivery"
+                    )
                 ),
-                PresentationItemModel(
-                    joke = null,
-                    setup = "setup",
-                    delivery = "delivery"
-                )
+                loading = true,
+                error = false,
+                onClickRetry = onClickRetry
             )
         )
-        assertThat(mapped.loading).isTrue
-        assertThat(mapped.error).isFalse
     }
 
     @Test

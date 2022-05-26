@@ -1,6 +1,6 @@
 package com.example.androidexample.presentation
 
-import com.example.androidexample.domain.UseCase
+import com.example.androidexample.domain.JokesUseCase
 import com.example.androidexample.presentation.MainViewModel.State
 import com.example.androidexample.presentation.mapper.PresentationModelMapper
 import com.example.androidexample.presentation.models.PresentationModel
@@ -18,7 +18,7 @@ import org.mockito.kotlin.mock
 @RunWith(MockitoJUnitRunner::class)
 class MainViewModelTest {
 
-    private val useCase = mock<UseCase>()
+    private val useCase = mock<JokesUseCase>()
     private val mapper = mock<PresentationModelMapper>()
 
     private lateinit var viewModel: MainViewModel

@@ -1,7 +1,7 @@
 package com.example.androidexample.di
 
-import com.example.androidexample.domain.UseCase
-import com.example.androidexample.domain.UseCaseImpl
+import com.example.androidexample.domain.JokesUseCase
+import com.example.androidexample.domain.JokesUseCaseImpl
 import com.example.androidexample.presentation.mapper.PresentationModelMapper
 import com.example.androidexample.presentation.mapper.PresentationModelMapperImpl
 import dagger.Binds
@@ -22,5 +22,5 @@ abstract class UseCaseModule {
 
     @ViewModelScoped
     @Binds
-    abstract fun bindUseCase(useCase: UseCaseImpl): UseCase
+    abstract fun bindUseCase(useCase: JokesUseCaseImpl): JokesUseCase
 }

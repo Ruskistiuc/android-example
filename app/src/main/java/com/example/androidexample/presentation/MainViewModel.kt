@@ -2,7 +2,7 @@ package com.example.androidexample.presentation
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.androidexample.domain.UseCase
+import com.example.androidexample.domain.JokesUseCase
 import com.example.androidexample.domain.models.DomainObject
 import com.example.androidexample.presentation.mapper.PresentationModelMapper
 import com.example.androidexample.presentation.models.PresentationModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
  * */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val useCase: UseCase,
+    private val useCase: JokesUseCase,
     private val mapper: PresentationModelMapper
 ) : ViewModel() {
 
