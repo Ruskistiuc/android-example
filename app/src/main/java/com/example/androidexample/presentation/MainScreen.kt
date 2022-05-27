@@ -1,5 +1,6 @@
 package com.example.androidexample.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +36,9 @@ fun MainScreen(model: PresentationModel) {
             model.error -> {
                 Error(onClickRetry = model.onClickRetry)
             }
+            model.selected != null -> {
+                ItemDetailsView(item = model.selected)
+            }
             else -> {
                 LazyColumn(
                     state = listState,
@@ -47,7 +51,10 @@ fun MainScreen(model: PresentationModel) {
                     modifier = Modifier.testTag(MAIN_SCREEN_ITEMS_LIST)
                 ) {
                     items(items = model.items) { i ->
-                        ListItem(i)
+                        ListItem(
+                            item = i,
+                            selectItem = i.onClick
+                        )
                     }
                 }
             }
@@ -56,16 +63,20 @@ fun MainScreen(model: PresentationModel) {
 }
 
 @Composable
-private fun ListItem(item: PresentationItemModel) {
+private fun ListItem(
+    item: PresentationItemModel,
+    selectItem: (PresentationItemModel) -> Unit
+) {
     Card(
         elevation = 3.dp,
-        shape = AndroidExampleTheme.shapes.medium,
-        modifier = Modifier.testTag(MAIN_SCREEN_LIST_ITEM)
+        shape = AndroidExampleTheme.shapes.medium
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable { selectItem(item) }
                 .padding(AndroidExampleTheme.paddings.padding_m)
+                .testTag(MAIN_SCREEN_LIST_ITEM)
         ) {
             item.joke?.let { joke ->
                 Text(
@@ -103,13 +114,17 @@ fun ListItemPreview() {
         Column {
             ListItem(
                 item = PresentationItemModel(
-                    joke = null, setup = "Text 1", delivery = "Text 2"
-                )
+                    joke = null, setup = "Text 1", delivery = "Text 2",
+                    onClick = {}
+                ),
+                selectItem = {}
             )
             ListItem(
                 item = PresentationItemModel(
-                    joke = "Joke 1", setup = null, delivery = null
-                )
+                    joke = "Joke 1", setup = null, delivery = null,
+                    onClick = {}
+                ),
+                selectItem = {}
             )
         }
     }

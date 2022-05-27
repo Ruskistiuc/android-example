@@ -39,9 +39,14 @@ class PresentationModelMapperImplTest {
         given(state.error).willReturn(false)
 
         val onClickRetry = mock<() -> Unit>()
+        val onClickItem = mock<(PresentationItemModel) -> Unit>()
 
         // Act
-        val mapped = mapper.transform(state, onClickRetry)
+        val mapped = mapper.transform(
+            state = state,
+            onClickRetry = onClickRetry,
+            onClickItem = onClickItem
+        )
 
         // Assert
         assertThat(mapped).isEqualTo(
@@ -50,17 +55,20 @@ class PresentationModelMapperImplTest {
                     PresentationItemModel(
                         joke = "joke",
                         setup = null,
-                        delivery = null
+                        delivery = null,
+                        onClick = onClickItem
                     ),
                     PresentationItemModel(
                         joke = null,
                         setup = "setup",
-                        delivery = "delivery"
+                        delivery = "delivery",
+                        onClick = onClickItem
                     )
                 ),
                 loading = true,
                 error = false,
-                onClickRetry = onClickRetry
+                onClickRetry = onClickRetry,
+                selected = null
             )
         )
     }
@@ -74,10 +82,36 @@ class PresentationModelMapperImplTest {
         val onClickRetry = mock<() -> Unit>()
 
         // Act
-        val mapped = mapper.transform(state, onClickRetry)
+        val mapped = mapper.transform(
+            state = state,
+            onClickRetry = onClickRetry,
+            onClickItem = mock()
+        )
         mapped.onClickRetry.invoke()
 
         // Assert
         verify(onClickRetry).invoke()
+    }
+
+    @Test
+    fun `GIVEN mapper WHEN on click item is called THEN should call the passed on click item`() {
+        // Arrange
+        val state = mock<State>()
+        given(state.data).willReturn(listOf(mock()))
+
+        val onClickItem = mock<(PresentationItemModel) -> Unit>()
+
+        val clickedItem = mock<PresentationItemModel>()
+
+        // Act
+        val mapped = mapper.transform(
+            state = state,
+            onClickRetry = mock(),
+            onClickItem = onClickItem
+        )
+        mapped.items[0].onClick.invoke(clickedItem)
+
+        // Assert
+        verify(onClickItem).invoke(clickedItem)
     }
 }

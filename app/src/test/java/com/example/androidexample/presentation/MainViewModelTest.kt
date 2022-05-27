@@ -3,6 +3,7 @@ package com.example.androidexample.presentation
 import com.example.androidexample.domain.JokesUseCase
 import com.example.androidexample.presentation.MainViewModel.State
 import com.example.androidexample.presentation.mapper.PresentationModelMapper
+import com.example.androidexample.presentation.models.PresentationItemModel
 import com.example.androidexample.presentation.models.PresentationModel
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.TestObserver
@@ -29,7 +30,13 @@ class MainViewModelTest {
         // Arrange
         given(useCase.getData()).willReturn(Single.just(listOf(mock())))
         val stateCaptor = argumentCaptor<State>()
-        given(mapper.transform(stateCaptor.capture(), any())).willReturn(mock())
+        given(
+            mapper.transform(
+                state = stateCaptor.capture(),
+                onClickRetry = any(),
+                onClickItem = any()
+            )
+        ).willReturn(mock())
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
@@ -42,12 +49,14 @@ class MainViewModelTest {
             assertThat(data).isEmpty()
             assertThat(loading).isTrue
             assertThat(error).isFalse
+            assertThat(selected).isNull()
         }
 
         with(stateCaptor.allValues[1]) {
             assertThat(data.size).isEqualTo(1)
             assertThat(loading).isFalse
             assertThat(error).isFalse
+            assertThat(selected).isNull()
         }
     }
 
@@ -56,7 +65,13 @@ class MainViewModelTest {
         // Arrange
         given(useCase.getData()).willReturn(Single.error(Exception()))
         val stateCaptor = argumentCaptor<State>()
-        given(mapper.transform(stateCaptor.capture(), any())).willReturn(mock())
+        given(
+            mapper.transform(
+                state = stateCaptor.capture(),
+                onClickRetry = any(),
+                onClickItem = any()
+            )
+        ).willReturn(mock())
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
@@ -69,12 +84,14 @@ class MainViewModelTest {
             assertThat(data).isEmpty()
             assertThat(loading).isTrue
             assertThat(error).isFalse
+            assertThat(selected).isNull()
         }
 
         with(stateCaptor.allValues[1]) {
             assertThat(data).isEmpty()
             assertThat(loading).isFalse
             assertThat(error).isTrue
+            assertThat(selected).isNull()
         }
     }
 
@@ -88,7 +105,8 @@ class MainViewModelTest {
         given(
             mapper.transform(
                 state = stateCaptor.capture(),
-                onclickRetry = onClickRetryCaptor.capture()
+                onClickRetry = onClickRetryCaptor.capture(),
+                onClickItem = any()
             )
         ).willReturn(mock())
 
@@ -105,12 +123,14 @@ class MainViewModelTest {
             assertThat(data).isEmpty()
             assertThat(loading).isTrue
             assertThat(error).isFalse
+            assertThat(selected).isNull()
         }
 
         with(stateCaptor.allValues[3]) {
             assertThat(data).isEmpty()
             assertThat(loading).isFalse
             assertThat(error).isTrue
+            assertThat(selected).isNull()
         }
     }
 
@@ -124,7 +144,8 @@ class MainViewModelTest {
         given(
             mapper.transform(
                 state = stateCaptor.capture(),
-                onclickRetry = onClickRetryCaptor.capture()
+                onClickRetry = onClickRetryCaptor.capture(),
+                onClickItem = any()
             )
         ).willReturn(mock())
 
@@ -142,12 +163,48 @@ class MainViewModelTest {
             assertThat(data).isEmpty()
             assertThat(loading).isTrue
             assertThat(error).isFalse
+            assertThat(selected).isNull()
         }
 
         with(stateCaptor.allValues[3]) {
             assertThat(data.size).isEqualTo(1)
             assertThat(loading).isFalse
             assertThat(error).isFalse
+            assertThat(selected).isNull()
+        }
+    }
+
+    @Test
+    fun `GIVEN view model WHEN on click item THEN should emit state with selected`() {
+        // Arrange
+        given(useCase.getData()).willReturn(Single.just(listOf(mock())))
+
+        val stateCaptor = argumentCaptor<State>()
+        val onClickItemCaptor = argumentCaptor<(PresentationItemModel) -> Unit>()
+        given(
+            mapper.transform(
+                state = stateCaptor.capture(),
+                onClickRetry = any(),
+                onClickItem = onClickItemCaptor.capture()
+            )
+        ).willReturn(mock())
+
+        val selectedItem = mock<PresentationItemModel>()
+
+        // Act
+        viewModel = MainViewModel(useCase, mapper)
+        viewModelStream = viewModel.model.test()
+
+        onClickItemCaptor.lastValue.invoke(selectedItem)
+
+        // Assert
+        assertThat(viewModelStream.values().size).isEqualTo(3)
+
+        with(stateCaptor.allValues[2]) {
+            assertThat(data.size).isEqualTo(1)
+            assertThat(loading).isFalse
+            assertThat(error).isFalse
+            assertThat(selected).isEqualTo(selectedItem)
         }
     }
 }

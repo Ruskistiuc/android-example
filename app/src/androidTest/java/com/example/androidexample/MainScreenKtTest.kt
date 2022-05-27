@@ -1,8 +1,14 @@
 package com.example.androidexample
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnyChild
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -14,6 +20,7 @@ import com.example.androidexample.presentation.models.PresentationItemModel
 import com.example.androidexample.presentation.models.PresentationModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
 import com.example.androidexample.util.ERROR_VIEW_RETRY_BUTTON
+import com.example.androidexample.util.ITEM_DETAILS_VIEW_ITEM
 import com.example.androidexample.util.LOADING_VIEW_LOADING_INDICATOR
 import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
 import com.example.androidexample.util.MAIN_SCREEN_LIST_ITEM
@@ -28,12 +35,14 @@ class MainScreenKtTest {
             PresentationItemModel(
                 joke = "Joke",
                 setup = null,
-                delivery = null
+                delivery = null,
+                onClick = {}
             ),
             PresentationItemModel(
                 joke = null,
                 setup = "Setup",
-                delivery = "Delivery"
+                delivery = "Delivery",
+                onClick = {}
             )
         )
     }
@@ -52,7 +61,8 @@ class MainScreenKtTest {
                         items = emptyList(),
                         loading = true,
                         error = false,
-                        onClickRetry = {}
+                        onClickRetry = {},
+                        selected = null
                     )
                 )
             }
@@ -79,7 +89,8 @@ class MainScreenKtTest {
                         items = emptyList(),
                         loading = false,
                         error = true,
-                        onClickRetry = {}
+                        onClickRetry = {},
+                        selected = null
                     )
                 )
             }
@@ -104,7 +115,8 @@ class MainScreenKtTest {
                         items = ITEMS_LIST,
                         loading = false,
                         error = false,
-                        onClickRetry = {}
+                        onClickRetry = {},
+                        selected = null
                     )
                 )
             }
@@ -116,6 +128,7 @@ class MainScreenKtTest {
 
             onAllNodesWithTag(MAIN_SCREEN_LIST_ITEM)
                 .assertCountEquals(2)
+                .assertAll(hasClickAction())
 
             onNodeWithText("Joke").assertIsDisplayed()
 
@@ -142,7 +155,8 @@ class MainScreenKtTest {
                         items = itemsList.value,
                         loading = loading.value,
                         error = false,
-                        onClickRetry = {}
+                        onClickRetry = {},
+                        selected = null
                     )
                 )
             }
@@ -182,7 +196,8 @@ class MainScreenKtTest {
                         items = itemsList.value,
                         loading = false,
                         error = error.value,
-                        onClickRetry = {}
+                        onClickRetry = {},
+                        selected = null
                     )
                 )
             }
@@ -208,5 +223,49 @@ class MainScreenKtTest {
             onAllNodesWithTag(MAIN_SCREEN_LIST_ITEM)
                 .assertCountEquals(2)
         }
+    }
+
+    @Test
+    fun mainScreen_item_details() {
+        val item = PresentationItemModel(
+            joke = "Joke",
+            setup = null,
+            delivery = null,
+            onClick = {}
+        )
+
+        val selectedItem: MutableState<PresentationItemModel?> = mutableStateOf(null)
+
+        composeTestRule.setContent {
+            AndroidExampleTheme {
+                MainScreen(
+                    model = PresentationModel(
+                        items = listOf(item),
+                        loading = false,
+                        error = false,
+                        onClickRetry = {},
+                        selected = selectedItem.value
+                    )
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithTag(MAIN_SCREEN_LIST_ITEM)
+            .performClick()
+
+        selectedItem.value = item
+
+        composeTestRule
+            .onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
+            .assertDoesNotExist()
+
+        composeTestRule
+            .onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
+            .assert(
+                hasAnyChild(
+                    hasText("Joke")
+                )
+            )
     }
 }

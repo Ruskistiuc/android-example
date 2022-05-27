@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.androidexample.domain.JokesUseCase
 import com.example.androidexample.domain.models.DomainObject
 import com.example.androidexample.presentation.mapper.PresentationModelMapper
+import com.example.androidexample.presentation.models.PresentationItemModel
 import com.example.androidexample.presentation.models.PresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -34,13 +35,20 @@ class MainViewModel @Inject constructor(
     private val initialState = State(
         data = emptyList(),
         loading = false,
-        error = false
+        error = false,
+        selected = null
     )
 
-    private val onclickRetry: () -> Unit = {
+    private val onClickRetry: () -> Unit = {
         Log.i(TAG, "On click retry button was triggered")
 
         events.onNext(Event.OnOpen)
+    }
+
+    private val onClickItem: (PresentationItemModel) -> Unit = { item ->
+        Log.i(TAG, "On click item was triggered")
+
+        events.onNext(Event.OnClickItem(item))
     }
 
     init {
@@ -69,6 +77,12 @@ class MainViewModel @Inject constructor(
                             } else {
                                 Observable.just(state)
                             }
+                        },
+
+                    event.ofType(Event.OnClickItem::class.java)
+                        .withLatestFrom(states) { e, s -> e to s }
+                        .map { (event, state) ->
+                            state.selected(event.item)
                         }
                 )
             }
@@ -78,19 +92,22 @@ class MainViewModel @Inject constructor(
             .map { state ->
                 mapper.transform(
                     state = state,
-                    onclickRetry = onclickRetry
+                    onClickRetry = onClickRetry,
+                    onClickItem = onClickItem
                 )
             }
     }
 
     sealed class Event {
         object OnOpen : Event()
+        data class OnClickItem(val item: PresentationItemModel) : Event()
     }
 
     data class State(
         val data: List<DomainObject>,
         val loading: Boolean,
-        val error: Boolean
+        val error: Boolean,
+        val selected: PresentationItemModel?
     ) {
         fun setData(data: List<DomainObject>) = this.copy(
             data = data, loading = false, error = false
@@ -98,5 +115,6 @@ class MainViewModel @Inject constructor(
 
         fun loading() = this.copy(loading = true, error = false)
         fun error() = this.copy(loading = false, error = true)
+        fun selected(item: PresentationItemModel) = this.copy(selected = item)
     }
 }
