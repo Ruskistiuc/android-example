@@ -1,6 +1,7 @@
 package com.example.androidexample
 
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasText
@@ -10,6 +11,7 @@ import androidx.compose.ui.test.onRoot
 import com.example.androidexample.presentation.ItemDetailsView
 import com.example.androidexample.presentation.models.PresentationItemModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
+import com.example.androidexample.util.ITEM_DETAILS_VIEW_BACK_BUTTON
 import com.example.androidexample.util.ITEM_DETAILS_VIEW_ITEM
 import com.example.androidexample.util.assertScreenshotMatchesGolden
 import org.junit.Rule
@@ -30,19 +32,25 @@ class ItemDetailsViewKtTest {
                         setup = null,
                         delivery = null,
                         onClick = {}
-                    )
+                    ),
+                    onClose = {}
                 )
             }
         }
 
-        composeTestRule
-            .onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
-            .assert(
-                hasAnyChild(
-                    hasText("Joke")
+        composeTestRule.apply {
+            onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
+                .assert(
+                    hasAnyChild(
+                        hasText("Joke")
+                    )
                 )
-            )
-            .assertIsDisplayed()
+                .assertIsDisplayed()
+
+            onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON)
+                .assertHasClickAction()
+                .assertIsDisplayed()
+        }
 
         assertScreenshotMatchesGolden(
             goldenName = "item_details_view_joke",
@@ -60,23 +68,29 @@ class ItemDetailsViewKtTest {
                         setup = "Setup",
                         delivery = "Delivery",
                         onClick = {}
-                    )
+                    ),
+                    onClose = {}
                 )
             }
         }
 
-        composeTestRule
-            .onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
-            .assert(
-                hasAnyChild(
-                    hasText("Setup")
-                ).and(
+        composeTestRule.apply {
+            onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
+                .assert(
                     hasAnyChild(
-                        hasText("Delivery")
+                        hasText("Setup")
+                    ).and(
+                        hasAnyChild(
+                            hasText("Delivery")
+                        )
                     )
                 )
-            )
-            .assertIsDisplayed()
+                .assertIsDisplayed()
+
+            onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON)
+                .assertHasClickAction()
+                .assertIsDisplayed()
+        }
 
         assertScreenshotMatchesGolden(
             goldenName = "item_details_view_setup_delivery",

@@ -15,11 +15,13 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.test.espresso.Espresso
 import com.example.androidexample.presentation.MainScreen
 import com.example.androidexample.presentation.models.PresentationItemModel
 import com.example.androidexample.presentation.models.PresentationModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
 import com.example.androidexample.util.ERROR_VIEW_RETRY_BUTTON
+import com.example.androidexample.util.ITEM_DETAILS_VIEW_BACK_BUTTON
 import com.example.androidexample.util.ITEM_DETAILS_VIEW_ITEM
 import com.example.androidexample.util.LOADING_VIEW_LOADING_INDICATOR
 import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
@@ -62,17 +64,19 @@ class MainScreenKtTest {
                         loading = true,
                         error = false,
                         onClickRetry = {},
-                        selected = null
+                        selected = null,
+                        onCloseItemDetails = {}
                     )
                 )
             }
         }
 
-        composeTestRule.mainClock.advanceTimeBy(1000)
+        composeTestRule.apply {
+            mainClock.advanceTimeBy(1000)
 
-        composeTestRule
-            .onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR)
-            .assertIsDisplayed()
+            onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR)
+                .assertIsDisplayed()
+        }
 
         assertScreenshotMatchesGolden(
             goldenName = "main_screen_loading_1000",
@@ -90,7 +94,8 @@ class MainScreenKtTest {
                         loading = false,
                         error = true,
                         onClickRetry = {},
-                        selected = null
+                        selected = null,
+                        onCloseItemDetails = {}
                     )
                 )
             }
@@ -116,7 +121,8 @@ class MainScreenKtTest {
                         loading = false,
                         error = false,
                         onClickRetry = {},
-                        selected = null
+                        selected = null,
+                        onCloseItemDetails = {}
                     )
                 )
             }
@@ -156,7 +162,8 @@ class MainScreenKtTest {
                         loading = loading.value,
                         error = false,
                         onClickRetry = {},
-                        selected = null
+                        selected = null,
+                        onCloseItemDetails = {}
                     )
                 )
             }
@@ -197,7 +204,8 @@ class MainScreenKtTest {
                         loading = false,
                         error = error.value,
                         onClickRetry = {},
-                        selected = null
+                        selected = null,
+                        onCloseItemDetails = {}
                     )
                 )
             }
@@ -226,46 +234,107 @@ class MainScreenKtTest {
     }
 
     @Test
-    fun mainScreen_item_details() {
-        val item = PresentationItemModel(
-            joke = "Joke",
-            setup = null,
-            delivery = null,
-            onClick = {}
-        )
-
+    fun mainScreen_item_details_and_toolbar_back() {
         val selectedItem: MutableState<PresentationItemModel?> = mutableStateOf(null)
 
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
                     model = PresentationModel(
-                        items = listOf(item),
+                        items = ITEMS_LIST,
                         loading = false,
                         error = false,
                         onClickRetry = {},
-                        selected = selectedItem.value
+                        selected = selectedItem.value,
+                        onCloseItemDetails = {}
                     )
                 )
             }
         }
 
         composeTestRule
-            .onNodeWithTag(MAIN_SCREEN_LIST_ITEM)
+            .onNodeWithText("Joke")
             .performClick()
 
-        selectedItem.value = item
+        selectedItem.value = ITEMS_LIST[0]
 
-        composeTestRule
-            .onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
-            .assertDoesNotExist()
+        composeTestRule.apply {
+            // Open item details
+            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
+                .assertDoesNotExist()
 
-        composeTestRule
-            .onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
-            .assert(
-                hasAnyChild(
-                    hasText("Joke")
+            onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
+                .assert(
+                    hasAnyChild(
+                        hasText("Joke")
+                    )
                 )
-            )
+
+            // close item details using toolbar
+            onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON)
+                .performClick()
+
+            selectedItem.value = null
+
+            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
+                .assertIsDisplayed()
+
+            onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON)
+                .assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun mainScreen_item_details_and_physical_back() {
+        val selectedItem: MutableState<PresentationItemModel?> = mutableStateOf(null)
+
+        composeTestRule.setContent {
+            AndroidExampleTheme {
+                MainScreen(
+                    model = PresentationModel(
+                        items = ITEMS_LIST,
+                        loading = false,
+                        error = false,
+                        onClickRetry = {},
+                        selected = selectedItem.value,
+                        onCloseItemDetails = {}
+                    )
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithText("Setup")
+            .performClick()
+
+        selectedItem.value = ITEMS_LIST[1]
+
+        composeTestRule.apply {
+            // Open item details
+            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
+                .assertDoesNotExist()
+
+            onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
+                .assert(
+                    hasAnyChild(
+                        hasText("Setup")
+                    ).and(
+                        hasAnyChild(
+                            hasText("Delivery")
+                        )
+                    )
+                )
+
+            // close item details using physical back
+            Espresso.pressBack()
+
+            selectedItem.value = null
+
+            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
+                .assertIsDisplayed()
+
+            onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON)
+                .assertDoesNotExist()
+        }
     }
 }

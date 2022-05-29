@@ -40,12 +40,14 @@ class PresentationModelMapperImplTest {
 
         val onClickRetry = mock<() -> Unit>()
         val onClickItem = mock<(PresentationItemModel) -> Unit>()
+        val onCloseItemDetails = mock<() -> Unit>()
 
         // Act
         val mapped = mapper.transform(
             state = state,
             onClickRetry = onClickRetry,
-            onClickItem = onClickItem
+            onClickItem = onClickItem,
+            onCloseItemDetails = onCloseItemDetails
         )
 
         // Assert
@@ -68,7 +70,8 @@ class PresentationModelMapperImplTest {
                 loading = true,
                 error = false,
                 onClickRetry = onClickRetry,
-                selected = null
+                selected = null,
+                onCloseItemDetails = onCloseItemDetails
             )
         )
     }
@@ -85,7 +88,8 @@ class PresentationModelMapperImplTest {
         val mapped = mapper.transform(
             state = state,
             onClickRetry = onClickRetry,
-            onClickItem = mock()
+            onClickItem = mock(),
+            onCloseItemDetails = mock()
         )
         mapped.onClickRetry.invoke()
 
@@ -107,11 +111,33 @@ class PresentationModelMapperImplTest {
         val mapped = mapper.transform(
             state = state,
             onClickRetry = mock(),
-            onClickItem = onClickItem
+            onClickItem = onClickItem,
+            onCloseItemDetails = mock()
         )
         mapped.items[0].onClick.invoke(clickedItem)
 
         // Assert
         verify(onClickItem).invoke(clickedItem)
+    }
+
+    @Test
+    fun `GIVEN mapper WHEN on close item details is called THEN should call the passed on close item details`() {
+        // Arrange
+        val state = mock<State>()
+        given(state.data).willReturn(listOf(mock()))
+
+        val onCloseItemDetails = mock<() -> Unit>()
+
+        // Act
+        val mapped = mapper.transform(
+            state = state,
+            onClickRetry = mock(),
+            onClickItem = mock(),
+            onCloseItemDetails = onCloseItemDetails
+        )
+        mapped.onCloseItemDetails.invoke()
+
+        // Assert
+        verify(onCloseItemDetails).invoke()
     }
 }

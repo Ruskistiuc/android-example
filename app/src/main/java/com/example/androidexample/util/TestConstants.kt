@@ -12,3 +12,4 @@ const val MAIN_SCREEN_LIST_ITEM = "listItem"
 
 // ItemDetailsView
 const val ITEM_DETAILS_VIEW_ITEM = "itemDetails"
+const val ITEM_DETAILS_VIEW_BACK_BUTTON = "backButton"

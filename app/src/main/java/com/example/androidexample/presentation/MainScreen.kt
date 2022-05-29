@@ -37,7 +37,10 @@ fun MainScreen(model: PresentationModel) {
                 Error(onClickRetry = model.onClickRetry)
             }
             model.selected != null -> {
-                ItemDetailsView(item = model.selected)
+                ItemDetailsView(
+                    item = model.selected,
+                    model.onCloseItemDetails
+                )
             }
             else -> {
                 LazyColumn(

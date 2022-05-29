@@ -34,7 +34,8 @@ class MainViewModelTest {
             mapper.transform(
                 state = stateCaptor.capture(),
                 onClickRetry = any(),
-                onClickItem = any()
+                onClickItem = any(),
+                onCloseItemDetails = any()
             )
         ).willReturn(mock())
 
@@ -69,7 +70,8 @@ class MainViewModelTest {
             mapper.transform(
                 state = stateCaptor.capture(),
                 onClickRetry = any(),
-                onClickItem = any()
+                onClickItem = any(),
+                onCloseItemDetails = any()
             )
         ).willReturn(mock())
 
@@ -106,7 +108,8 @@ class MainViewModelTest {
             mapper.transform(
                 state = stateCaptor.capture(),
                 onClickRetry = onClickRetryCaptor.capture(),
-                onClickItem = any()
+                onClickItem = any(),
+                onCloseItemDetails = any()
             )
         ).willReturn(mock())
 
@@ -145,7 +148,8 @@ class MainViewModelTest {
             mapper.transform(
                 state = stateCaptor.capture(),
                 onClickRetry = onClickRetryCaptor.capture(),
-                onClickItem = any()
+                onClickItem = any(),
+                onCloseItemDetails = any()
             )
         ).willReturn(mock())
 
@@ -185,7 +189,8 @@ class MainViewModelTest {
             mapper.transform(
                 state = stateCaptor.capture(),
                 onClickRetry = any(),
-                onClickItem = onClickItemCaptor.capture()
+                onClickItem = onClickItemCaptor.capture(),
+                onCloseItemDetails = any()
             )
         ).willReturn(mock())
 
@@ -205,6 +210,45 @@ class MainViewModelTest {
             assertThat(loading).isFalse
             assertThat(error).isFalse
             assertThat(selected).isEqualTo(selectedItem)
+        }
+    }
+
+    @Test
+    fun `GIVEN view model WHEN on close item details THEN should emit state without selected`() {
+        // Arrange
+        given(useCase.getData()).willReturn(Single.just(listOf(mock())))
+
+        val stateCaptor = argumentCaptor<State>()
+        val onClickItemCaptor = argumentCaptor<(PresentationItemModel) -> Unit>()
+        val onCloseItemDetailsCaptor = argumentCaptor<() -> Unit>()
+
+        val selectedItem = mock<PresentationItemModel>()
+
+        given(
+            mapper.transform(
+                state = stateCaptor.capture(),
+                onClickRetry = any(),
+                onClickItem = onClickItemCaptor.capture(),
+                onCloseItemDetails = onCloseItemDetailsCaptor.capture()
+            )
+        ).willReturn(mock())
+
+        // Act
+        viewModel = MainViewModel(useCase, mapper)
+        viewModelStream = viewModel.model.test()
+
+        onClickItemCaptor.lastValue.invoke(selectedItem)
+
+        onCloseItemDetailsCaptor.lastValue.invoke()
+
+        // Assert
+        assertThat(viewModelStream.values().size).isEqualTo(4)
+
+        with(stateCaptor.allValues[3]) {
+            assertThat(data.size).isEqualTo(1)
+            assertThat(loading).isFalse
+            assertThat(error).isFalse
+            assertThat(selected).isNull()
         }
     }
 }

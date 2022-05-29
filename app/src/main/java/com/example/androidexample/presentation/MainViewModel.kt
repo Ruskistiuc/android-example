@@ -51,6 +51,12 @@ class MainViewModel @Inject constructor(
         events.onNext(Event.OnClickItem(item))
     }
 
+    private val onCloseItemDetails: () -> Unit = {
+        Log.i(TAG, "On close item details was triggered")
+
+        events.onNext(Event.OnCloseItemDetails)
+    }
+
     init {
         model = events
             .startWithItem(Event.OnOpen)
@@ -59,7 +65,7 @@ class MainViewModel @Inject constructor(
                     event.ofType(Event.OnOpen::class.java)
                         .withLatestFrom(
                             states.startWithItem(initialState)
-                        ) { _, state -> state }
+                        ) { _, s -> s }
                         .switchMap { state ->
                             if (state.data.isEmpty()) {
                                 useCase.getData()
@@ -83,6 +89,12 @@ class MainViewModel @Inject constructor(
                         .withLatestFrom(states) { e, s -> e to s }
                         .map { (event, state) ->
                             state.selected(event.item)
+                        },
+
+                    event.ofType(Event.OnCloseItemDetails::class.java)
+                        .withLatestFrom(states) { _, s -> s }
+                        .map { state ->
+                            state.unselect()
                         }
                 )
             }
@@ -93,7 +105,8 @@ class MainViewModel @Inject constructor(
                 mapper.transform(
                     state = state,
                     onClickRetry = onClickRetry,
-                    onClickItem = onClickItem
+                    onClickItem = onClickItem,
+                    onCloseItemDetails = onCloseItemDetails
                 )
             }
     }
@@ -101,6 +114,7 @@ class MainViewModel @Inject constructor(
     sealed class Event {
         object OnOpen : Event()
         data class OnClickItem(val item: PresentationItemModel) : Event()
+        object OnCloseItemDetails : Event()
     }
 
     data class State(
@@ -116,5 +130,6 @@ class MainViewModel @Inject constructor(
         fun loading() = this.copy(loading = true, error = false)
         fun error() = this.copy(loading = false, error = true)
         fun selected(item: PresentationItemModel) = this.copy(selected = item)
+        fun unselect() = this.copy(selected = null)
     }
 }

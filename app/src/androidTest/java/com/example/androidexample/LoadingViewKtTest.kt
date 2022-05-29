@@ -27,12 +27,13 @@ class LoadingViewKtTest {
             }
         }
 
-        // Advance clock (keeping it paused)
-        composeTestRule.mainClock.advanceTimeBy(1000)
+        composeTestRule.apply {
+            // Advance clock (keeping it paused)
+            mainClock.advanceTimeBy(1000)
 
-        composeTestRule
-            .onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR)
-            .assertIsDisplayed()
+            onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR)
+                .assertIsDisplayed()
+        }
 
         assertScreenshotMatchesGolden(
             goldenName = "loading_view_1000",

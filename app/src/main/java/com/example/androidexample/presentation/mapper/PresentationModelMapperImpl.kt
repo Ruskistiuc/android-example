@@ -10,7 +10,8 @@ class PresentationModelMapperImpl @Inject constructor() : PresentationModelMappe
     override fun transform(
         state: State,
         onClickRetry: () -> Unit,
-        onClickItem: (PresentationItemModel) -> Unit
+        onClickItem: (PresentationItemModel) -> Unit,
+        onCloseItemDetails: () -> Unit
     ): PresentationModel {
         return PresentationModel(
             items = state.data.map { item ->
@@ -24,7 +25,8 @@ class PresentationModelMapperImpl @Inject constructor() : PresentationModelMappe
             loading = state.loading,
             error = state.error,
             onClickRetry = onClickRetry,
-            selected = state.selected
+            selected = state.selected,
+            onCloseItemDetails = onCloseItemDetails
         )
     }
 }

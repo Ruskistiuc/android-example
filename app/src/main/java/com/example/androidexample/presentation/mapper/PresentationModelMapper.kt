@@ -9,6 +9,7 @@ interface PresentationModelMapper {
     fun transform(
         state: State,
         onClickRetry: () -> Unit,
-        onClickItem: (PresentationItemModel) -> Unit
+        onClickItem: (PresentationItemModel) -> Unit,
+        onCloseItemDetails: () -> Unit
     ): PresentationModel
 }
