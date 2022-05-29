@@ -15,6 +15,7 @@ buildscript {
         mockito_version = '4.5.1'
         mockito_kotlin_version = '3.2.0'
         assertj_joda_time_version = '2.2.0'
+        swipe_refresh_version = '0.24.9-beta'
     }
 
     dependencies {

@@ -23,6 +23,9 @@ import com.example.androidexample.presentation.models.PresentationModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
 import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
 import com.example.androidexample.util.MAIN_SCREEN_LIST_ITEM
+import com.example.androidexample.util.MAIN_SCREEN_SWIPE_REFRESH
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun MainScreen(model: PresentationModel) {
@@ -43,21 +46,27 @@ fun MainScreen(model: PresentationModel) {
                 )
             }
             else -> {
-                LazyColumn(
-                    state = listState,
-                    contentPadding = PaddingValues(
-                        all = AndroidExampleTheme.paddings.padding_l
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = AndroidExampleTheme.paddings.padding_l
-                    ),
-                    modifier = Modifier.testTag(MAIN_SCREEN_ITEMS_LIST)
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing = false),
+                    onRefresh = model.onSwipeRefresh,
+                    modifier = Modifier.testTag(MAIN_SCREEN_SWIPE_REFRESH)
                 ) {
-                    items(items = model.items) { i ->
-                        ListItem(
-                            item = i,
-                            selectItem = i.onClick
-                        )
+                    LazyColumn(
+                        state = listState,
+                        contentPadding = PaddingValues(
+                            all = AndroidExampleTheme.paddings.padding_l
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(
+                            space = AndroidExampleTheme.paddings.padding_l
+                        ),
+                        modifier = Modifier.testTag(MAIN_SCREEN_ITEMS_LIST)
+                    ) {
+                        items(items = model.items) { i ->
+                            ListItem(
+                                item = i,
+                                selectItem = i.onClick
+                            )
+                        }
                     }
                 }
             }

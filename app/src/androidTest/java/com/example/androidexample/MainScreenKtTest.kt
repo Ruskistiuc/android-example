@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasClickAction
@@ -15,6 +16,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
 import androidx.test.espresso.Espresso
 import com.example.androidexample.presentation.MainScreen
 import com.example.androidexample.presentation.models.PresentationItemModel
@@ -26,6 +29,7 @@ import com.example.androidexample.util.ITEM_DETAILS_VIEW_ITEM
 import com.example.androidexample.util.LOADING_VIEW_LOADING_INDICATOR
 import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
 import com.example.androidexample.util.MAIN_SCREEN_LIST_ITEM
+import com.example.androidexample.util.MAIN_SCREEN_SWIPE_REFRESH
 import com.example.androidexample.util.assertScreenshotMatchesGolden
 import org.junit.Rule
 import org.junit.Test
@@ -65,7 +69,8 @@ class MainScreenKtTest {
                         error = false,
                         onClickRetry = {},
                         selected = null,
-                        onCloseItemDetails = {}
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
                     )
                 )
             }
@@ -95,7 +100,8 @@ class MainScreenKtTest {
                         error = true,
                         onClickRetry = {},
                         selected = null,
-                        onCloseItemDetails = {}
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
                     )
                 )
             }
@@ -122,7 +128,8 @@ class MainScreenKtTest {
                         error = false,
                         onClickRetry = {},
                         selected = null,
-                        onCloseItemDetails = {}
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
                     )
                 )
             }
@@ -163,7 +170,8 @@ class MainScreenKtTest {
                         error = false,
                         onClickRetry = {},
                         selected = null,
-                        onCloseItemDetails = {}
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
                     )
                 )
             }
@@ -205,7 +213,8 @@ class MainScreenKtTest {
                         error = error.value,
                         onClickRetry = {},
                         selected = null,
-                        onCloseItemDetails = {}
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
                     )
                 )
             }
@@ -246,7 +255,8 @@ class MainScreenKtTest {
                         error = false,
                         onClickRetry = {},
                         selected = selectedItem.value,
-                        onCloseItemDetails = {}
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
                     )
                 )
             }
@@ -297,7 +307,8 @@ class MainScreenKtTest {
                         error = false,
                         onClickRetry = {},
                         selected = selectedItem.value,
-                        onCloseItemDetails = {}
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
                     )
                 )
             }
@@ -335,6 +346,88 @@ class MainScreenKtTest {
 
             onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON)
                 .assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun mainScreen_swipe_refresh_successfully() {
+        val items = mutableStateOf(ITEMS_LIST)
+        composeTestRule.setContent {
+            AndroidExampleTheme {
+                MainScreen(
+                    model = PresentationModel(
+                        items = items.value,
+                        loading = false,
+                        error = false,
+                        onClickRetry = {},
+                        selected = null,
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
+                    )
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithTag(MAIN_SCREEN_SWIPE_REFRESH)
+            .performTouchInput { swipeDown() }
+
+        items.value = listOf(
+            PresentationItemModel(
+                joke = "No joke",
+                setup = null,
+                delivery = null,
+                onClick = {}
+            )
+        )
+
+        composeTestRule.apply {
+            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
+                .assertIsDisplayed()
+
+            onAllNodesWithTag(MAIN_SCREEN_LIST_ITEM)
+                .assertCountEquals(1)
+
+            onNodeWithText("Joke").assertDoesNotExist()
+            onNodeWithText("No joke").assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun mainScreen_swipe_refresh_with_error() {
+        val items = mutableStateOf(ITEMS_LIST)
+        val error = mutableStateOf(false)
+
+        composeTestRule.setContent {
+            AndroidExampleTheme {
+                MainScreen(
+                    model = PresentationModel(
+                        items = items.value,
+                        loading = false,
+                        error = error.value,
+                        onClickRetry = {},
+                        selected = null,
+                        onCloseItemDetails = {},
+                        onSwipeRefresh = {}
+                    )
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithTag(MAIN_SCREEN_SWIPE_REFRESH)
+            .performTouchInput { swipeDown() }
+
+        items.value = emptyList()
+        error.value = true
+
+        composeTestRule.apply {
+            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST)
+                .assertDoesNotExist()
+
+            onNodeWithTag(ERROR_VIEW_RETRY_BUTTON)
+                .assertHasClickAction()
+                .assertIsDisplayed()
         }
     }
 }

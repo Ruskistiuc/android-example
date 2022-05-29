@@ -6,6 +6,6 @@ data class PresentationModel(
     val error: Boolean,
     val onClickRetry: () -> Unit,
     val selected: PresentationItemModel?,
-    val onCloseItemDetails: () -> Unit
-
+    val onCloseItemDetails: () -> Unit,
+    val onSwipeRefresh: () -> Unit
 )

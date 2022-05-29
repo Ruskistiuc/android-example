@@ -14,8 +14,9 @@ import javax.inject.Inject
 
 /**
  * The parameters of an annotated constructor of a class are the dependencies of that class.
- * In this case, MainViewModel has useCase as a dependency.
- * Therefore, Hilt must also know how to provide the instance of UseCase.
+ * In this case, MainViewModel has useCase and mapper as dependencies.
+ * Therefore, Hilt must also know how to provide the instance of
+ * JokesUseCase and PresentationModelMapper.
  * */
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -57,6 +58,12 @@ class MainViewModel @Inject constructor(
         events.onNext(Event.OnCloseItemDetails)
     }
 
+    private val onSwipeRefresh: () -> Unit = {
+        Log.i(TAG, "On swipe refresh was triggered")
+
+        events.onNext(Event.OnSwipeRefresh)
+    }
+
     init {
         model = events
             .startWithItem(Event.OnOpen)
@@ -68,18 +75,7 @@ class MainViewModel @Inject constructor(
                         ) { _, s -> s }
                         .switchMap { state ->
                             if (state.data.isEmpty()) {
-                                useCase.getData()
-                                    .toObservable()
-                                    .map { data ->
-                                        Log.i(TAG, "Event.OnOpen: Data fetched successfully")
-                                        state.setData(data)
-                                    }
-                                    .startWithItem(state.loading())
-                                    .onErrorReturn { error ->
-                                        Log.e(TAG, "Event.OnOpen: Failed to fetch the data: $error")
-
-                                        state.error()
-                                    }
+                                getData(state)
                             } else {
                                 Observable.just(state)
                             }
@@ -95,6 +91,12 @@ class MainViewModel @Inject constructor(
                         .withLatestFrom(states) { _, s -> s }
                         .map { state ->
                             state.unselect()
+                        },
+
+                    event.ofType(Event.OnSwipeRefresh::class.java)
+                        .withLatestFrom(states) { _, s -> s }
+                        .switchMap { state ->
+                            getData(state)
                         }
                 )
             }
@@ -106,8 +108,25 @@ class MainViewModel @Inject constructor(
                     state = state,
                     onClickRetry = onClickRetry,
                     onClickItem = onClickItem,
-                    onCloseItemDetails = onCloseItemDetails
+                    onCloseItemDetails = onCloseItemDetails,
+                    onSwipeRefresh = onSwipeRefresh
                 )
+            }
+    }
+
+    private fun getData(state: State): Observable<State> {
+        return useCase.getData()
+            .toObservable()
+            .map { data ->
+                Log.i(TAG, "Event.OnOpen: Data fetched successfully")
+
+                state.setData(data)
+            }
+            .startWithItem(state.loading())
+            .onErrorReturn { error ->
+                Log.e(TAG, "Event.OnOpen: Failed to fetch the data: $error")
+
+                state.error()
             }
     }
 
@@ -115,6 +134,7 @@ class MainViewModel @Inject constructor(
         object OnOpen : Event()
         data class OnClickItem(val item: PresentationItemModel) : Event()
         object OnCloseItemDetails : Event()
+        object OnSwipeRefresh : Event()
     }
 
     data class State(
@@ -124,11 +144,17 @@ class MainViewModel @Inject constructor(
         val selected: PresentationItemModel?
     ) {
         fun setData(data: List<DomainObject>) = this.copy(
-            data = data, loading = false, error = false
+            data = data, loading = false, error = false, selected = null
         )
 
-        fun loading() = this.copy(loading = true, error = false)
-        fun error() = this.copy(loading = false, error = true)
+        fun loading() = this.copy(
+            data = emptyList(), loading = true, error = false, selected = null
+        )
+
+        fun error() = this.copy(
+            data = emptyList(), loading = false, error = true, selected = null
+        )
+
         fun selected(item: PresentationItemModel) = this.copy(selected = item)
         fun unselect() = this.copy(selected = null)
     }

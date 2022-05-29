@@ -1,6 +1,7 @@
 package com.example.androidexample.presentation
 
 import com.example.androidexample.domain.JokesUseCase
+import com.example.androidexample.domain.models.DomainObject
 import com.example.androidexample.presentation.MainViewModel.State
 import com.example.androidexample.presentation.mapper.PresentationModelMapper
 import com.example.androidexample.presentation.models.PresentationItemModel
@@ -35,7 +36,8 @@ class MainViewModelTest {
                 state = stateCaptor.capture(),
                 onClickRetry = any(),
                 onClickItem = any(),
-                onCloseItemDetails = any()
+                onCloseItemDetails = any(),
+                onSwipeRefresh = any()
             )
         ).willReturn(mock())
 
@@ -71,7 +73,8 @@ class MainViewModelTest {
                 state = stateCaptor.capture(),
                 onClickRetry = any(),
                 onClickItem = any(),
-                onCloseItemDetails = any()
+                onCloseItemDetails = any(),
+                onSwipeRefresh = any()
             )
         ).willReturn(mock())
 
@@ -109,7 +112,8 @@ class MainViewModelTest {
                 state = stateCaptor.capture(),
                 onClickRetry = onClickRetryCaptor.capture(),
                 onClickItem = any(),
-                onCloseItemDetails = any()
+                onCloseItemDetails = any(),
+                onSwipeRefresh = any()
             )
         ).willReturn(mock())
 
@@ -138,7 +142,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `GIVEN view model WHEN on click retry with success THEN should emit loading and items`() {
+    fun `GIVEN view model WHEN on click retry successfully THEN should emit loading and items`() {
         // Arrange
         given(useCase.getData()).willReturn(Single.error(Exception()))
 
@@ -149,7 +153,8 @@ class MainViewModelTest {
                 state = stateCaptor.capture(),
                 onClickRetry = onClickRetryCaptor.capture(),
                 onClickItem = any(),
-                onCloseItemDetails = any()
+                onCloseItemDetails = any(),
+                onSwipeRefresh = any()
             )
         ).willReturn(mock())
 
@@ -190,7 +195,8 @@ class MainViewModelTest {
                 state = stateCaptor.capture(),
                 onClickRetry = any(),
                 onClickItem = onClickItemCaptor.capture(),
-                onCloseItemDetails = any()
+                onCloseItemDetails = any(),
+                onSwipeRefresh = any()
             )
         ).willReturn(mock())
 
@@ -229,7 +235,8 @@ class MainViewModelTest {
                 state = stateCaptor.capture(),
                 onClickRetry = any(),
                 onClickItem = onClickItemCaptor.capture(),
-                onCloseItemDetails = onCloseItemDetailsCaptor.capture()
+                onCloseItemDetails = onCloseItemDetailsCaptor.capture(),
+                onSwipeRefresh = any()
             )
         ).willReturn(mock())
 
@@ -248,6 +255,92 @@ class MainViewModelTest {
             assertThat(data.size).isEqualTo(1)
             assertThat(loading).isFalse
             assertThat(error).isFalse
+            assertThat(selected).isNull()
+        }
+    }
+
+    @Test
+    fun `GIVEN view model WHEN on swipe refresh successfully THEN should emit state with new data`() {
+        // Arrange
+        given(useCase.getData()).willReturn(Single.just(listOf(mock())))
+
+        val stateCaptor = argumentCaptor<State>()
+        val onSwipeRefreshCaptor = argumentCaptor<() -> Unit>()
+        given(
+            mapper.transform(
+                state = stateCaptor.capture(),
+                onClickRetry = any(),
+                onClickItem = any(),
+                onCloseItemDetails = any(),
+                onSwipeRefresh = onSwipeRefreshCaptor.capture()
+            )
+        ).willReturn(mock())
+
+        // Act
+        viewModel = MainViewModel(useCase, mapper)
+        viewModelStream = viewModel.model.test()
+
+        val newItem = mock<DomainObject>()
+        given(useCase.getData()).willReturn(Single.just(listOf(newItem)))
+        onSwipeRefreshCaptor.lastValue.invoke()
+
+        // Assert
+        assertThat(viewModelStream.values().size).isEqualTo(4)
+
+        with(stateCaptor.allValues[2]) {
+            assertThat(data).isEmpty()
+            assertThat(loading).isTrue
+            assertThat(error).isFalse
+            assertThat(selected).isNull()
+        }
+
+        with(stateCaptor.allValues[3]) {
+            assertThat(data.size).isEqualTo(1)
+            assertThat(data.first()).isEqualTo(newItem)
+            assertThat(loading).isFalse
+            assertThat(error).isFalse
+            assertThat(selected).isNull()
+        }
+    }
+
+    @Test
+    fun `GIVEN view model WHEN on swipe refresh with error THEN should emit state with error`() {
+        // Arrange
+        given(useCase.getData()).willReturn(Single.just(listOf(mock())))
+
+        val stateCaptor = argumentCaptor<State>()
+        val onSwipeRefreshCaptor = argumentCaptor<() -> Unit>()
+        given(
+            mapper.transform(
+                state = stateCaptor.capture(),
+                onClickRetry = any(),
+                onClickItem = any(),
+                onCloseItemDetails = any(),
+                onSwipeRefresh = onSwipeRefreshCaptor.capture()
+            )
+        ).willReturn(mock())
+
+        // Act
+        viewModel = MainViewModel(useCase, mapper)
+        viewModelStream = viewModel.model.test()
+
+        given(useCase.getData()).willReturn(Single.error(Exception()))
+        onSwipeRefreshCaptor.lastValue.invoke()
+
+        // Assert
+        assertThat(viewModelStream.values().size).isEqualTo(4)
+
+        with(stateCaptor.allValues[2]) {
+            assertThat(data).isEmpty()
+            assertThat(loading).isTrue
+            assertThat(error).isFalse
+            assertThat(selected).isNull()
+        }
+
+        with(stateCaptor.allValues[3]) {
+            assertThat(data).isEmpty()
+            assertThat(loading).isFalse
+            assertThat(error).isTrue
             assertThat(selected).isNull()
         }
     }

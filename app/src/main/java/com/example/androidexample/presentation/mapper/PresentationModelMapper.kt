@@ -10,6 +10,7 @@ interface PresentationModelMapper {
         state: State,
         onClickRetry: () -> Unit,
         onClickItem: (PresentationItemModel) -> Unit,
-        onCloseItemDetails: () -> Unit
+        onCloseItemDetails: () -> Unit,
+        onSwipeRefresh: () -> Unit
     ): PresentationModel
 }

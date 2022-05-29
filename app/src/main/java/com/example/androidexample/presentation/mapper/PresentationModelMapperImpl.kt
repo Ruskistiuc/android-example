@@ -11,7 +11,8 @@ class PresentationModelMapperImpl @Inject constructor() : PresentationModelMappe
         state: State,
         onClickRetry: () -> Unit,
         onClickItem: (PresentationItemModel) -> Unit,
-        onCloseItemDetails: () -> Unit
+        onCloseItemDetails: () -> Unit,
+        onSwipeRefresh: () -> Unit
     ): PresentationModel {
         return PresentationModel(
             items = state.data.map { item ->
@@ -26,7 +27,8 @@ class PresentationModelMapperImpl @Inject constructor() : PresentationModelMappe
             error = state.error,
             onClickRetry = onClickRetry,
             selected = state.selected,
-            onCloseItemDetails = onCloseItemDetails
+            onCloseItemDetails = onCloseItemDetails,
+            onSwipeRefresh = onSwipeRefresh
         )
     }
 }

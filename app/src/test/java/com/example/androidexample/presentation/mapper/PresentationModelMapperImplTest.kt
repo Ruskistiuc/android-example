@@ -41,13 +41,15 @@ class PresentationModelMapperImplTest {
         val onClickRetry = mock<() -> Unit>()
         val onClickItem = mock<(PresentationItemModel) -> Unit>()
         val onCloseItemDetails = mock<() -> Unit>()
+        val onSwipeRefresh = mock<() -> Unit>()
 
         // Act
         val mapped = mapper.transform(
             state = state,
             onClickRetry = onClickRetry,
             onClickItem = onClickItem,
-            onCloseItemDetails = onCloseItemDetails
+            onCloseItemDetails = onCloseItemDetails,
+            onSwipeRefresh = onSwipeRefresh
         )
 
         // Assert
@@ -71,7 +73,8 @@ class PresentationModelMapperImplTest {
                 error = false,
                 onClickRetry = onClickRetry,
                 selected = null,
-                onCloseItemDetails = onCloseItemDetails
+                onCloseItemDetails = onCloseItemDetails,
+                onSwipeRefresh = onSwipeRefresh
             )
         )
     }
@@ -89,7 +92,8 @@ class PresentationModelMapperImplTest {
             state = state,
             onClickRetry = onClickRetry,
             onClickItem = mock(),
-            onCloseItemDetails = mock()
+            onCloseItemDetails = mock(),
+            onSwipeRefresh = mock()
         )
         mapped.onClickRetry.invoke()
 
@@ -112,7 +116,8 @@ class PresentationModelMapperImplTest {
             state = state,
             onClickRetry = mock(),
             onClickItem = onClickItem,
-            onCloseItemDetails = mock()
+            onCloseItemDetails = mock(),
+            onSwipeRefresh = mock()
         )
         mapped.items[0].onClick.invoke(clickedItem)
 
@@ -133,11 +138,34 @@ class PresentationModelMapperImplTest {
             state = state,
             onClickRetry = mock(),
             onClickItem = mock(),
-            onCloseItemDetails = onCloseItemDetails
+            onCloseItemDetails = onCloseItemDetails,
+            onSwipeRefresh = mock()
         )
         mapped.onCloseItemDetails.invoke()
 
         // Assert
         verify(onCloseItemDetails).invoke()
+    }
+
+    @Test
+    fun `GIVEN mapper WHEN on swipe refresh is called THEN should call the passed on swipe refresh`() {
+        // Arrange
+        val state = mock<State>()
+        given(state.data).willReturn(listOf(mock()))
+
+        val onSwipeRefresh = mock<() -> Unit>()
+
+        // Act
+        val mapped = mapper.transform(
+            state = state,
+            onClickRetry = mock(),
+            onClickItem = mock(),
+            onCloseItemDetails = mock(),
+            onSwipeRefresh = onSwipeRefresh
+        )
+        mapped.onSwipeRefresh.invoke()
+
+        // Assert
+        verify(onSwipeRefresh).invoke()
     }
 }
