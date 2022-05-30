@@ -23,7 +23,6 @@ import com.example.androidexample.presentation.models.PresentationModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
 import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
 import com.example.androidexample.util.MAIN_SCREEN_LIST_ITEM
-import com.example.androidexample.util.MAIN_SCREEN_SWIPE_REFRESH
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -48,8 +47,7 @@ fun MainScreen(model: PresentationModel) {
             else -> {
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing = false),
-                    onRefresh = model.onSwipeRefresh,
-                    modifier = Modifier.testTag(MAIN_SCREEN_SWIPE_REFRESH)
+                    onRefresh = model.onSwipeRefresh
                 ) {
                     LazyColumn(
                         state = listState,
