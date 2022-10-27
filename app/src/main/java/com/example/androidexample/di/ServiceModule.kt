@@ -1,10 +1,7 @@
 package com.example.androidexample.di
 
 import com.example.androidexample.data.JokesService
-import com.example.androidexample.data.mapper.DomainObjectMapper
-import com.example.androidexample.data.mapper.DomainObjectMapperImpl
 import com.example.androidexample.di.ServiceModule.RetrofitModule
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,19 +15,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class ServiceModule {
 
-    @Singleton
-    @Binds
-    abstract fun bindDomainObjectMapper(
-        domainObjectMapper: DomainObjectMapperImpl
-    ): DomainObjectMapper
-
     @Module
     @InstallIn(SingletonComponent::class)
     internal object RetrofitModule {
 
         @Singleton
         @Provides
-        fun provideService(): JokesService {
+        fun provideJokesService(): JokesService {
             return Retrofit.Builder()
                 .baseUrl("https://v2.jokeapi.dev/joke/")
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())

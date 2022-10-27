@@ -16,38 +16,36 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
+import com.example.androidexample.presentation.ERROR_VIEW_RETRY_BUTTON
+import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_BACK_BUTTON
+import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_ITEM
+import com.example.androidexample.presentation.LOADING_VIEW_LOADING_INDICATOR
+import com.example.androidexample.presentation.MAIN_SCREEN_ITEMS_LIST
+import com.example.androidexample.presentation.MAIN_SCREEN_LIST_ITEM
 import com.example.androidexample.presentation.MainScreen
-import com.example.androidexample.presentation.models.PresentationItemModel
-import com.example.androidexample.presentation.models.PresentationModel
+import com.example.androidexample.presentation.models.JokeUiModel
+import com.example.androidexample.presentation.models.MainUiModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.ERROR_VIEW_RETRY_BUTTON
-import com.example.androidexample.util.ITEM_DETAILS_VIEW_BACK_BUTTON
-import com.example.androidexample.util.ITEM_DETAILS_VIEW_ITEM
-import com.example.androidexample.util.LOADING_VIEW_LOADING_INDICATOR
-import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
-import com.example.androidexample.util.MAIN_SCREEN_LIST_ITEM
 import com.example.androidexample.util.assertScreenshotMatchesGolden
 import org.junit.Rule
 import org.junit.Test
 
 class MainScreenKtTest {
 
-    companion object {
-        val ITEMS_LIST = listOf(
-            PresentationItemModel(
-                joke = "Joke",
-                setup = null,
-                delivery = null,
-                onClick = {}
-            ),
-            PresentationItemModel(
-                joke = null,
-                setup = "Setup",
-                delivery = "Delivery",
-                onClick = {}
-            )
+    private val itemsList = listOf(
+        JokeUiModel(
+            joke = "Joke",
+            setup = null,
+            delivery = null,
+            onClick = {}
+        ),
+        JokeUiModel(
+            joke = null,
+            setup = "Setup",
+            delivery = "Delivery",
+            onClick = {}
         )
-    }
+    )
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -59,7 +57,7 @@ class MainScreenKtTest {
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
-                    model = PresentationModel(
+                    uiModel = MainUiModel(
                         items = emptyList(),
                         loading = true,
                         error = false,
@@ -90,7 +88,7 @@ class MainScreenKtTest {
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
-                    model = PresentationModel(
+                    uiModel = MainUiModel(
                         items = emptyList(),
                         loading = false,
                         error = true,
@@ -118,8 +116,8 @@ class MainScreenKtTest {
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
-                    model = PresentationModel(
-                        items = ITEMS_LIST,
+                    uiModel = MainUiModel(
+                        items = itemsList,
                         loading = false,
                         error = false,
                         onClickRetry = {},
@@ -154,13 +152,13 @@ class MainScreenKtTest {
     @Test
     fun mainScreen_loading_and_items() {
         // States that can cause recompositions
-        val itemsList = mutableStateOf(emptyList<PresentationItemModel>())
+        val itemsList = mutableStateOf(emptyList<JokeUiModel>())
         val loading = mutableStateOf(true)
 
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
-                    model = PresentationModel(
+                    uiModel = MainUiModel(
                         items = itemsList.value,
                         loading = loading.value,
                         error = false,
@@ -179,7 +177,7 @@ class MainScreenKtTest {
 
         // The states are changed, but there is no recomposition
         loading.value = false
-        itemsList.value = ITEMS_LIST
+        itemsList.value = this.itemsList
 
         // Assertions triggers recomposition
         composeTestRule.apply {
@@ -197,13 +195,13 @@ class MainScreenKtTest {
     @Test
     fun mainScreen_error_retry_and_items() {
         // States that can cause recompositions
-        val itemsList = mutableStateOf(emptyList<PresentationItemModel>())
+        val itemsList = mutableStateOf(emptyList<JokeUiModel>())
         val error = mutableStateOf(true)
 
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
-                    model = PresentationModel(
+                    uiModel = MainUiModel(
                         items = itemsList.value,
                         loading = false,
                         error = error.value,
@@ -223,7 +221,7 @@ class MainScreenKtTest {
 
         // The states are changed, but there is no recomposition
         error.value = false
-        itemsList.value = ITEMS_LIST
+        itemsList.value = this.itemsList
 
         // Assertions triggers recomposition
         composeTestRule.apply {
@@ -240,13 +238,13 @@ class MainScreenKtTest {
 
     @Test
     fun mainScreen_item_details_and_toolbar_back() {
-        val selectedItem: MutableState<PresentationItemModel?> = mutableStateOf(null)
+        val selectedItem: MutableState<JokeUiModel?> = mutableStateOf(null)
 
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
-                    model = PresentationModel(
-                        items = ITEMS_LIST,
+                    uiModel = MainUiModel(
+                        items = itemsList,
                         loading = false,
                         error = false,
                         onClickRetry = {},
@@ -262,7 +260,7 @@ class MainScreenKtTest {
             .onNodeWithText("Joke")
             .performClick()
 
-        selectedItem.value = ITEMS_LIST[0]
+        selectedItem.value = itemsList[0]
 
         composeTestRule.apply {
             // Open item details
@@ -292,13 +290,13 @@ class MainScreenKtTest {
 
     @Test
     fun mainScreen_item_details_and_physical_back() {
-        val selectedItem: MutableState<PresentationItemModel?> = mutableStateOf(null)
+        val selectedItem: MutableState<JokeUiModel?> = mutableStateOf(null)
 
         composeTestRule.setContent {
             AndroidExampleTheme {
                 MainScreen(
-                    model = PresentationModel(
-                        items = ITEMS_LIST,
+                    uiModel = MainUiModel(
+                        items = itemsList,
                         loading = false,
                         error = false,
                         onClickRetry = {},
@@ -314,7 +312,7 @@ class MainScreenKtTest {
             .onNodeWithText("Setup")
             .performClick()
 
-        selectedItem.value = ITEMS_LIST[1]
+        selectedItem.value = itemsList[1]
 
         composeTestRule.apply {
             // Open item details

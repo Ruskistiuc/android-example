@@ -9,7 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.LOADING_VIEW_LOADING_INDICATOR
+
+const val LOADING_VIEW_LOADING_INDICATOR = "loadingIndicator"
 
 @Composable
 fun Loading() {

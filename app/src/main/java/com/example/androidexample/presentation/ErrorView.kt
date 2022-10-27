@@ -12,7 +12,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.androidexample.R
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.ERROR_VIEW_RETRY_BUTTON
+
+const val ERROR_VIEW_RETRY_BUTTON = "retryButton"
 
 @Composable
 fun Error(onClickRetry: () -> Unit) {

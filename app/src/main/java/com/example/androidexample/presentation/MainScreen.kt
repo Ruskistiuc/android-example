@@ -18,53 +18,50 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.androidexample.presentation.models.PresentationItemModel
-import com.example.androidexample.presentation.models.PresentationModel
+import com.example.androidexample.presentation.models.JokeUiModel
+import com.example.androidexample.presentation.models.MainUiModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.MAIN_SCREEN_ITEMS_LIST
-import com.example.androidexample.util.MAIN_SCREEN_LIST_ITEM
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+const val MAIN_SCREEN_ITEMS_LIST = "itemsList"
+const val MAIN_SCREEN_LIST_ITEM = "listItem"
+
 @Composable
-fun MainScreen(model: PresentationModel) {
+fun MainScreen(uiModel: MainUiModel) {
     val listState = rememberLazyListState()
 
     Surface {
         when {
-            model.loading -> {
+            uiModel.loading -> {
                 Loading()
             }
-            model.error -> {
-                Error(onClickRetry = model.onClickRetry)
+            uiModel.error -> {
+                Error(onClickRetry = uiModel.onClickRetry)
             }
-            model.selected != null -> {
-                ItemDetailsView(
-                    item = model.selected,
-                    model.onCloseItemDetails
-                )
-            }
-            else -> {
-                SwipeRefresh(
-                    state = rememberSwipeRefreshState(isRefreshing = false),
-                    onRefresh = model.onSwipeRefresh
+            uiModel.selected != null -> ItemDetailsView(
+                item = uiModel.selected,
+                uiModel.onCloseItemDetails
+            )
+            else -> SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = false),
+                onRefresh = uiModel.onSwipeRefresh
+            ) {
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(
+                        all = AndroidExampleTheme.paddings.padding_l
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(
+                        space = AndroidExampleTheme.paddings.padding_l
+                    ),
+                    modifier = Modifier.testTag(MAIN_SCREEN_ITEMS_LIST)
                 ) {
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(
-                            all = AndroidExampleTheme.paddings.padding_l
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(
-                            space = AndroidExampleTheme.paddings.padding_l
-                        ),
-                        modifier = Modifier.testTag(MAIN_SCREEN_ITEMS_LIST)
-                    ) {
-                        items(items = model.items) { i ->
-                            ListItem(
-                                item = i,
-                                selectItem = i.onClick
-                            )
-                        }
+                    items(items = uiModel.items) { item ->
+                        ListItem(
+                            item = item,
+                            selectItem = item.onClick
+                        )
                     }
                 }
             }
@@ -74,8 +71,8 @@ fun MainScreen(model: PresentationModel) {
 
 @Composable
 private fun ListItem(
-    item: PresentationItemModel,
-    selectItem: (PresentationItemModel) -> Unit
+    item: JokeUiModel,
+    selectItem: (JokeUiModel) -> Unit
 ) {
     Card(
         elevation = 3.dp,
@@ -123,14 +120,14 @@ fun ListItemPreview() {
     AndroidExampleTheme {
         Column {
             ListItem(
-                item = PresentationItemModel(
+                item = JokeUiModel(
                     joke = null, setup = "Text 1", delivery = "Text 2",
                     onClick = {}
                 ),
                 selectItem = {}
             )
             ListItem(
-                item = PresentationItemModel(
+                item = JokeUiModel(
                     joke = "Joke 1", setup = null, delivery = null,
                     onClick = {}
                 ),

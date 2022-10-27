@@ -1,8 +1,8 @@
 package com.example.androidexample.presentation.models
 
-data class PresentationItemModel(
+data class JokeUiModel(
     val joke: String?,
     val setup: String?,
     val delivery: String?,
-    val onClick: (PresentationItemModel) -> Unit
+    val onClick: (JokeUiModel) -> Unit
 )

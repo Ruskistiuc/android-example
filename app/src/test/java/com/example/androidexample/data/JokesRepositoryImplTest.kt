@@ -1,9 +1,9 @@
 package com.example.androidexample.data
 
-import com.example.androidexample.data.mapper.DomainObjectMapper
+import com.example.androidexample.data.mapper.ResponseMapper
 import com.example.androidexample.data.models.Response
 import com.example.androidexample.domain.JokesRepository
-import com.example.androidexample.domain.models.DomainObject
+import com.example.androidexample.domain.models.Joke
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.observers.TestObserver
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +22,7 @@ import org.mockito.kotlin.mock
 class JokesRepositoryImplTest {
 
     private val service = mock<JokesService>()
-    private val mapper = mock<DomainObjectMapper>()
+    private val mapper = mock<ResponseMapper>()
 
     private lateinit var repository: JokesRepository
 
@@ -40,11 +40,11 @@ class JokesRepositoryImplTest {
         val response = mock<Response>()
         given(service.getData()).willReturn(Observable.just(response))
 
-        val transformedList = listOf<DomainObject>(mock())
+        val transformedList = listOf<Joke>(mock())
         given(mapper.transform(response)).willReturn(transformedList)
 
         // Act
-        val dataObserver: TestObserver<List<DomainObject>> = repository.getData().test()
+        val dataObserver: TestObserver<List<Joke>> = repository.getData().test()
 
         // Assert
         assertThat(dataObserver.values().first()).isEqualTo(transformedList)
@@ -56,7 +56,7 @@ class JokesRepositoryImplTest {
         given(service.getData()).willReturn(Observable.error(Exception()))
 
         // Act
-        val dataObserver: TestObserver<List<DomainObject>> = repository.getData().test()
+        val dataObserver: TestObserver<List<Joke>> = repository.getData().test()
 
         // Assert
         dataObserver.assertError(Exception::class.java)

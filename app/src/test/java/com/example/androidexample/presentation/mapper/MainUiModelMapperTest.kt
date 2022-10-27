@@ -1,9 +1,9 @@
 package com.example.androidexample.presentation.mapper
 
-import com.example.androidexample.domain.models.DomainObject
+import com.example.androidexample.domain.models.Joke
 import com.example.androidexample.presentation.MainViewModel.State
-import com.example.androidexample.presentation.models.PresentationItemModel
-import com.example.androidexample.presentation.models.PresentationModel
+import com.example.androidexample.presentation.models.JokeUiModel
+import com.example.androidexample.presentation.models.MainUiModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -14,32 +14,32 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
-class PresentationModelMapperImplTest {
+class MainUiModelMapperTest {
 
-    private lateinit var mapper: PresentationModelMapper
+    private lateinit var mapper: MainUiModelMapper
 
     @Before
     fun setup() {
-        mapper = PresentationModelMapperImpl()
+        mapper = MainUiModelMapper()
     }
 
     @Test
     fun `GIVEN mapper WHEN state is transformed THEN should return presentation model`() {
         // Arrange
-        val domainObject1 = mock<DomainObject>()
-        given(domainObject1.joke).willReturn("joke")
+        val joke1 = mock<Joke>()
+        given(joke1.joke).willReturn("joke")
 
-        val domainObject2 = mock<DomainObject>()
-        given(domainObject2.setup).willReturn("setup")
-        given(domainObject2.delivery).willReturn("delivery")
+        val joke2 = mock<Joke>()
+        given(joke2.setup).willReturn("setup")
+        given(joke2.delivery).willReturn("delivery")
 
         val state = mock<State>()
-        given(state.data).willReturn(listOf(domainObject1, domainObject2))
+        given(state.data).willReturn(listOf(joke1, joke2))
         given(state.loading).willReturn(true)
         given(state.error).willReturn(false)
 
         val onClickRetry = mock<() -> Unit>()
-        val onClickItem = mock<(PresentationItemModel) -> Unit>()
+        val onClickItem = mock<(JokeUiModel) -> Unit>()
         val onCloseItemDetails = mock<() -> Unit>()
         val onSwipeRefresh = mock<() -> Unit>()
 
@@ -54,15 +54,15 @@ class PresentationModelMapperImplTest {
 
         // Assert
         assertThat(mapped).isEqualTo(
-            PresentationModel(
+            MainUiModel(
                 items = listOf(
-                    PresentationItemModel(
+                    JokeUiModel(
                         joke = "joke",
                         setup = null,
                         delivery = null,
                         onClick = onClickItem
                     ),
-                    PresentationItemModel(
+                    JokeUiModel(
                         joke = null,
                         setup = "setup",
                         delivery = "delivery",
@@ -107,9 +107,9 @@ class PresentationModelMapperImplTest {
         val state = mock<State>()
         given(state.data).willReturn(listOf(mock()))
 
-        val onClickItem = mock<(PresentationItemModel) -> Unit>()
+        val onClickItem = mock<(JokeUiModel) -> Unit>()
 
-        val clickedItem = mock<PresentationItemModel>()
+        val clickedItem = mock<JokeUiModel>()
 
         // Act
         val mapped = mapper.transform(

@@ -1,11 +1,11 @@
 package com.example.androidexample.presentation
 
 import com.example.androidexample.domain.JokesUseCase
-import com.example.androidexample.domain.models.DomainObject
+import com.example.androidexample.domain.models.Joke
 import com.example.androidexample.presentation.MainViewModel.State
-import com.example.androidexample.presentation.mapper.PresentationModelMapper
-import com.example.androidexample.presentation.models.PresentationItemModel
-import com.example.androidexample.presentation.models.PresentationModel
+import com.example.androidexample.presentation.mapper.MainUiModelMapper
+import com.example.androidexample.presentation.models.JokeUiModel
+import com.example.androidexample.presentation.models.MainUiModel
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.TestObserver
 import org.assertj.core.api.Assertions.assertThat
@@ -21,10 +21,10 @@ import org.mockito.kotlin.mock
 class MainViewModelTest {
 
     private val useCase = mock<JokesUseCase>()
-    private val mapper = mock<PresentationModelMapper>()
+    private val mapper = mock<MainUiModelMapper>()
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var viewModelStream: TestObserver<PresentationModel>
+    private lateinit var viewModelStream: TestObserver<MainUiModel>
 
     @Test
     fun `GIVEN view model WHEN init successfully THEN should emit loading and items`() {
@@ -43,7 +43,7 @@ class MainViewModelTest {
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
         // Assert
         assertThat(viewModelStream.values().size).isEqualTo(2)
@@ -80,7 +80,7 @@ class MainViewModelTest {
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
         // Assert
         assertThat(viewModelStream.values().size).isEqualTo(2)
@@ -119,7 +119,7 @@ class MainViewModelTest {
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
         onClickRetryCaptor.lastValue.invoke()
 
@@ -160,7 +160,7 @@ class MainViewModelTest {
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
         given(useCase.getData()).willReturn(Single.just(listOf(mock())))
         onClickRetryCaptor.lastValue.invoke()
@@ -189,7 +189,7 @@ class MainViewModelTest {
         given(useCase.getData()).willReturn(Single.just(listOf(mock())))
 
         val stateCaptor = argumentCaptor<State>()
-        val onClickItemCaptor = argumentCaptor<(PresentationItemModel) -> Unit>()
+        val onClickItemCaptor = argumentCaptor<(JokeUiModel) -> Unit>()
         given(
             mapper.transform(
                 state = stateCaptor.capture(),
@@ -200,11 +200,11 @@ class MainViewModelTest {
             )
         ).willReturn(mock())
 
-        val selectedItem = mock<PresentationItemModel>()
+        val selectedItem = mock<JokeUiModel>()
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
         onClickItemCaptor.lastValue.invoke(selectedItem)
 
@@ -225,10 +225,10 @@ class MainViewModelTest {
         given(useCase.getData()).willReturn(Single.just(listOf(mock())))
 
         val stateCaptor = argumentCaptor<State>()
-        val onClickItemCaptor = argumentCaptor<(PresentationItemModel) -> Unit>()
+        val onClickItemCaptor = argumentCaptor<(JokeUiModel) -> Unit>()
         val onCloseItemDetailsCaptor = argumentCaptor<() -> Unit>()
 
-        val selectedItem = mock<PresentationItemModel>()
+        val selectedItem = mock<JokeUiModel>()
 
         given(
             mapper.transform(
@@ -242,7 +242,7 @@ class MainViewModelTest {
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
         onClickItemCaptor.lastValue.invoke(selectedItem)
 
@@ -278,9 +278,9 @@ class MainViewModelTest {
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
-        val newItem = mock<DomainObject>()
+        val newItem = mock<Joke>()
         given(useCase.getData()).willReturn(Single.just(listOf(newItem)))
         onSwipeRefreshCaptor.lastValue.invoke()
 
@@ -322,7 +322,7 @@ class MainViewModelTest {
 
         // Act
         viewModel = MainViewModel(useCase, mapper)
-        viewModelStream = viewModel.model.test()
+        viewModelStream = viewModel.uiModel.test()
 
         given(useCase.getData()).willReturn(Single.error(Exception()))
         onSwipeRefreshCaptor.lastValue.invoke()

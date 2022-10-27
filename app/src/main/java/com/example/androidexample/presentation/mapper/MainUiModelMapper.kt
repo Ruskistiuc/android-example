@@ -1,22 +1,22 @@
 package com.example.androidexample.presentation.mapper
 
 import com.example.androidexample.presentation.MainViewModel.State
-import com.example.androidexample.presentation.models.PresentationItemModel
-import com.example.androidexample.presentation.models.PresentationModel
+import com.example.androidexample.presentation.models.JokeUiModel
+import com.example.androidexample.presentation.models.MainUiModel
 import javax.inject.Inject
 
-class PresentationModelMapperImpl @Inject constructor() : PresentationModelMapper {
+class MainUiModelMapper @Inject constructor() {
 
-    override fun transform(
+    fun transform(
         state: State,
         onClickRetry: () -> Unit,
-        onClickItem: (PresentationItemModel) -> Unit,
+        onClickItem: (JokeUiModel) -> Unit,
         onCloseItemDetails: () -> Unit,
         onSwipeRefresh: () -> Unit
-    ): PresentationModel {
-        return PresentationModel(
+    ): MainUiModel {
+        return MainUiModel(
             items = state.data.map { item ->
-                PresentationItemModel(
+                JokeUiModel(
                     joke = item.joke,
                     setup = item.setup,
                     delivery = item.delivery,

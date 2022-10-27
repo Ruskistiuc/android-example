@@ -19,14 +19,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.androidexample.presentation.models.PresentationItemModel
+import com.example.androidexample.presentation.models.JokeUiModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.ITEM_DETAILS_VIEW_BACK_BUTTON
-import com.example.androidexample.util.ITEM_DETAILS_VIEW_ITEM
+
+const val ITEM_DETAILS_VIEW_ITEM = "itemDetails"
+const val ITEM_DETAILS_VIEW_BACK_BUTTON = "backButton"
 
 @Composable
 fun ItemDetailsView(
-    item: PresentationItemModel,
+    item: JokeUiModel,
     onClose: () -> Unit
 ) {
     Scaffold(
@@ -54,7 +55,12 @@ fun ItemDetailsView(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(AndroidExampleTheme.paddings.padding_l)
+                .padding(
+                    top = it.calculateTopPadding(),
+                    start = AndroidExampleTheme.paddings.padding_l,
+                    end = AndroidExampleTheme.paddings.padding_l,
+                    bottom = AndroidExampleTheme.paddings.padding_l
+                )
                 .testTag(ITEM_DETAILS_VIEW_ITEM),
             verticalArrangement = Arrangement.Center
         ) {
@@ -94,7 +100,7 @@ fun ItemDetailsView(
 private fun ItemDetailsViewJokePreview() {
     AndroidExampleTheme {
         ItemDetailsView(
-            item = PresentationItemModel(
+            item = JokeUiModel(
                 joke = "Joke",
                 setup = null,
                 delivery = null,
@@ -110,7 +116,7 @@ private fun ItemDetailsViewJokePreview() {
 private fun ItemDetailsViewSetupDeliveryPreview() {
     AndroidExampleTheme {
         ItemDetailsView(
-            item = PresentationItemModel(
+            item = JokeUiModel(
                 joke = null,
                 setup = "Setup",
                 delivery = "Delivery",

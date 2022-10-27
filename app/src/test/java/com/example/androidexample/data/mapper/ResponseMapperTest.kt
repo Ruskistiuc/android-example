@@ -1,35 +1,35 @@
 package com.example.androidexample.data.mapper
 
-import com.example.androidexample.data.models.Joke
+import com.example.androidexample.data.models.JokeEntity
 import com.example.androidexample.data.models.Response
-import com.example.androidexample.domain.models.DomainObject
+import com.example.androidexample.domain.models.Joke
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.given
 import org.mockito.kotlin.mock
 
-class DomainObjectMapperImplTest {
+class ResponseMapperTest {
 
-    private lateinit var mapper: DomainObjectMapper
+    private lateinit var mapper: ResponseMapper
 
     @Before
     fun setup() {
-        mapper = DomainObjectMapperImpl()
+        mapper = ResponseMapper()
     }
 
     @Test
     fun `GIVEN mapper WHEN response is transformed THEN should return list of domain object`() {
         // Arrange
         val response = mock<Response>()
-        val joke1 = mock<Joke>()
-        given(joke1.joke).willReturn("joke")
+        val jokeEntity1 = mock<JokeEntity>()
+        given(jokeEntity1.joke).willReturn("joke")
 
-        val joke2 = mock<Joke>()
-        given(joke2.setup).willReturn("joke setup")
-        given(joke2.delivery).willReturn("joke delivery")
+        val jokeEntity2 = mock<JokeEntity>()
+        given(jokeEntity2.setup).willReturn("joke setup")
+        given(jokeEntity2.delivery).willReturn("joke delivery")
 
-        val list = listOf(joke1, joke2)
+        val list = listOf(jokeEntity1, jokeEntity2)
         given(response.jokes).willReturn(list)
 
         // Act
@@ -38,12 +38,12 @@ class DomainObjectMapperImplTest {
         // Assert
         assertThat(mapped).isEqualTo(
             listOf(
-                DomainObject(
+                Joke(
                     joke = "joke",
                     setup = null,
                     delivery = null
                 ),
-                DomainObject(
+                Joke(
                     joke = null,
                     setup = "joke setup",
                     delivery = "joke delivery"

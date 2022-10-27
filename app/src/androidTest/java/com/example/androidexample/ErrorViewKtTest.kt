@@ -8,9 +8,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.printToLog
+import com.example.androidexample.presentation.ERROR_VIEW_RETRY_BUTTON
 import com.example.androidexample.presentation.Error
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.ERROR_VIEW_RETRY_BUTTON
 import com.example.androidexample.util.assertScreenshotMatchesGolden
 import org.junit.Rule
 import org.junit.Test

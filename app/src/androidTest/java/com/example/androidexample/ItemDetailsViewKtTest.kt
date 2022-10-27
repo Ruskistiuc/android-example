@@ -8,11 +8,11 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
+import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_BACK_BUTTON
+import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_ITEM
 import com.example.androidexample.presentation.ItemDetailsView
-import com.example.androidexample.presentation.models.PresentationItemModel
+import com.example.androidexample.presentation.models.JokeUiModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.ITEM_DETAILS_VIEW_BACK_BUTTON
-import com.example.androidexample.util.ITEM_DETAILS_VIEW_ITEM
 import com.example.androidexample.util.assertScreenshotMatchesGolden
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +27,7 @@ class ItemDetailsViewKtTest {
         composeTestRule.setContent {
             AndroidExampleTheme {
                 ItemDetailsView(
-                    item = PresentationItemModel(
+                    item = JokeUiModel(
                         joke = "Joke",
                         setup = null,
                         delivery = null,
@@ -63,7 +63,7 @@ class ItemDetailsViewKtTest {
         composeTestRule.setContent {
             AndroidExampleTheme {
                 ItemDetailsView(
-                    item = PresentationItemModel(
+                    item = JokeUiModel(
                         joke = null,
                         setup = "Setup",
                         delivery = "Delivery",

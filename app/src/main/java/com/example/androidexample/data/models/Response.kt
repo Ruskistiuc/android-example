@@ -1,3 +1,3 @@
 package com.example.androidexample.data.models
 
-data class Response(val jokes: List<Joke>)
+data class Response(val jokes: List<JokeEntity>)
