@@ -4,8 +4,8 @@ import com.example.androidexample.data.models.Response
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.http.GET
 
-interface Service {
+interface JokesService {
 
-    @GET("/ten")
+    @GET("Programming?amount=10")
     fun getData(): Observable<Response>
 }
