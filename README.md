@@ -1,5 +1,3 @@
-# WIP
-
 # Description 📝
 
 This project aims to develop a simple Android application using the best practices (up to date) that
@@ -8,14 +6,16 @@ most companies are trying to follow.
 **Note:** If you have any improvement/suggestion, don't hesitate to reach me out or open an
 issue/suggestion. Let's build something good together that anyone can benefit from. 🤖
 
-# Technologies ⚒️
+# Technologies / Libraries ⚒️
 
 - Kotlin
+- Ktlint
 - RxJava
-- Retrofit
 - Mockito
+- Retrofit
 - Dagger - Hilt
 - Jetpack Compose
+- Compose Bill of Materials (BOM)
 
 # Decisions 🔀
 
