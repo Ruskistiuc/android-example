@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androidexample.presentation.models.JokeUiModel
 import com.example.androidexample.presentation.models.MainUiModel
@@ -114,25 +113,30 @@ private fun ListItem(
     }
 }
 
-@Preview
 @Composable
-fun ListItemPreview() {
+@CombinedPreviews
+fun ListItemSetupDeliveryPreview() {
     AndroidExampleTheme {
-        Column {
-            ListItem(
-                item = JokeUiModel(
-                    joke = null, setup = "Text 1", delivery = "Text 2",
-                    onClick = {}
-                ),
-                selectItem = {}
-            )
-            ListItem(
-                item = JokeUiModel(
-                    joke = "Joke 1", setup = null, delivery = null,
-                    onClick = {}
-                ),
-                selectItem = {}
-            )
-        }
+        ListItem(
+            item = JokeUiModel(
+                joke = null, setup = "Text 1", delivery = "Text 2",
+                onClick = {}
+            ),
+            selectItem = {}
+        )
+    }
+}
+
+@Composable
+@CombinedPreviews
+fun ListItemJokePreview() {
+    AndroidExampleTheme {
+        ListItem(
+            item = JokeUiModel(
+                joke = "Joke 1", setup = null, delivery = null,
+                onClick = {}
+            ),
+            selectItem = {}
+        )
     }
 }
