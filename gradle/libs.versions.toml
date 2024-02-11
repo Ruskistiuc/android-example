@@ -1,0 +1,74 @@
+[versions]
+composeBom = "2022.10.00"
+coreKtx = "1.9.0"
+activityCompose = "1.6.1"
+lifecycleRuntimeKtx = "2.4.1"
+swipeRefresh = "0.24.9-beta"
+hiltAndroid = "2.44"
+retrofit = "2.9.0"
+rxjava = "3.0.0"
+mockito = "4.5.1"
+mockitoKotlin = "3.2.0"
+assertjJodaTime = "2.2.0"
+junit = "4.13.2"
+extJunit = "1.1.3"
+espressoCore = "3.4.0"
+androidGradlePlugin = "7.3.1"
+kotlinAndroidPlugin = "1.7.20"
+ktlintPlugin = "10.3.0"
+
+[libraries]
+# BOM to library version mapping
+# https://developer.android.com/jetpack/compose/setup#bom-version-mapping
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material = { group = "androidx.compose.material", name = "material" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
+# Swipe refresh
+accompanist-swiperefresh = { group = "com.google.accompanist", name = "accompanist-swiperefresh", version.ref = "swipeRefresh" }
+
+# Dagger - Hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid" }
+
+# Retrofit
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+retrofit-adapter-rxjava3 = { group = "com.squareup.retrofit2", name = "adapter-rxjava3", version.ref = "retrofit" }
+
+# RxJava
+rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjava" }
+runtime-rxjava = { group = "androidx.compose.runtime", name = "runtime-rxjava3" }
+
+# RxAndroid
+rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxjava" }
+
+# Mockito
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
+
+# AssertJ
+assertj-joda-time = { group = "org.assertj", name = "assertj-joda-time", version.ref = "assertjJodaTime" }
+
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+# UI Tests
+# Test rules and transitive dependencies
+ui-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+# Needed for createComposeRule, but not createAndroidComposeRule
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAndroidPlugin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
+dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
