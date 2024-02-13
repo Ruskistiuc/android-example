@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.example.androidexample.presentation.models.JokeUiModel
 import com.example.androidexample.presentation.models.MainUiModel
@@ -115,28 +117,27 @@ private fun ListItem(
 
 @Composable
 @PreviewLightDark
-fun ListItemSetupDeliveryPreview() {
+fun ListItemPreview(
+    @PreviewParameter(ListItemPreviewParameterProvider::class) jokeUiModel: JokeUiModel
+) {
     AndroidExampleTheme {
-        ListItem(
-            item = JokeUiModel(
-                joke = null, setup = "Text 1", delivery = "Text 2",
-                onClick = {}
-            ),
-            selectItem = {}
-        )
+        ListItem(item = jokeUiModel, selectItem = {})
     }
 }
 
-@Composable
-@PreviewLightDark
-fun ListItemJokePreview() {
-    AndroidExampleTheme {
-        ListItem(
-            item = JokeUiModel(
-                joke = "Joke 1", setup = null, delivery = null,
-                onClick = {}
-            ),
-            selectItem = {}
+private class ListItemPreviewParameterProvider : PreviewParameterProvider<JokeUiModel> {
+    override val values = sequenceOf(
+        JokeUiModel(
+            joke = null,
+            setup = "Setup",
+            delivery = "Delivery",
+            onClick = {}
+        ),
+        JokeUiModel(
+            joke = "Joke",
+            setup = null,
+            delivery = null,
+            onClick = {}
         )
-    }
+    )
 }

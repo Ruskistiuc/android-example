@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.example.androidexample.presentation.models.JokeUiModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
@@ -97,32 +99,27 @@ fun ItemDetailsView(
 
 @Composable
 @PreviewLightDark
-private fun ItemDetailsViewJokePreview() {
+private fun ItemDetailsViewPreview(
+    @PreviewParameter(ItemDetailsViewPreviewParameterProvider::class) jokeUiModel: JokeUiModel
+) {
     AndroidExampleTheme {
-        ItemDetailsView(
-            item = JokeUiModel(
-                joke = "Joke",
-                setup = null,
-                delivery = null,
-                onClick = { }
-            ),
-            onClose = {}
-        )
+        ItemDetailsView(item = jokeUiModel, onClose = {})
     }
 }
 
-@Composable
-@PreviewLightDark
-private fun ItemDetailsViewSetupDeliveryPreview() {
-    AndroidExampleTheme {
-        ItemDetailsView(
-            item = JokeUiModel(
-                joke = null,
-                setup = "Setup",
-                delivery = "Delivery",
-                onClick = {}
-            ),
-            onClose = {}
+private class ItemDetailsViewPreviewParameterProvider : PreviewParameterProvider<JokeUiModel> {
+    override val values = sequenceOf(
+        JokeUiModel(
+            joke = null,
+            setup = "Setup",
+            delivery = "Delivery",
+            onClick = {}
+        ),
+        JokeUiModel(
+            joke = "Joke",
+            setup = null,
+            delivery = null,
+            onClick = {}
         )
-    }
+    )
 }
