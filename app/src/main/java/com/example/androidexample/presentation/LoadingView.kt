@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.example.androidexample.ui.theme.AndroidExampleTheme
 
 const val LOADING_VIEW_LOADING_INDICATOR = "loadingIndicator"
@@ -26,7 +27,7 @@ fun Loading() {
 }
 
 @Composable
-@CombinedPreviews
+@PreviewLightDark
 private fun LoadingPreview() {
     AndroidExampleTheme {
         Surface {
