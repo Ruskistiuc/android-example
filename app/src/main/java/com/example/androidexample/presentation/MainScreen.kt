@@ -32,16 +32,15 @@ fun MainScreen(uiModel: MainUiModel) {
 
     Surface {
         when {
-            uiModel.loading -> {
-                Loading()
-            }
-            uiModel.error -> {
-                Error(onClickRetry = uiModel.onClickRetry)
-            }
+            uiModel.loading -> Loading()
+
+            uiModel.error -> Error(onClickRetry = uiModel.onClickRetry)
+
             uiModel.selected != null -> ItemDetailsView(
                 item = uiModel.selected,
                 uiModel.onCloseItemDetails
             )
+
             else -> SwipeRefresh(
                 state = rememberSwipeRefreshState(isRefreshing = false),
                 onRefresh = uiModel.onSwipeRefresh
