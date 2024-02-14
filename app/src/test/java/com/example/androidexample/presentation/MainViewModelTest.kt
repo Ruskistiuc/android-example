@@ -2,13 +2,15 @@ package com.example.androidexample.presentation
 
 import com.example.androidexample.domain.JokesUseCase
 import com.example.androidexample.domain.models.Joke
-import com.example.androidexample.presentation.MainViewModel.State
-import com.example.androidexample.presentation.mapper.MainUiModelMapper
-import com.example.androidexample.presentation.models.JokeUiModel
-import com.example.androidexample.presentation.models.MainUiModel
+import com.example.androidexample.presentation.MainViewModel.InnerState
+import com.example.androidexample.presentation.mapper.ScreenStateMapper
+import com.example.androidexample.presentation.models.ScreenState
+import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.TestObserver
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.argumentCaptor
@@ -18,19 +20,21 @@ import org.mockito.kotlin.mock
 class MainViewModelTest {
 
     private val useCase = mock<JokesUseCase>()
-    private val mapper = mock<MainUiModelMapper>()
+    private val mapper = mock<ScreenStateMapper>()
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var viewModelStream: TestObserver<MainUiModel>
+    private lateinit var viewModelStream: TestObserver<ScreenState>
 
-    private val stateCaptor = argumentCaptor<State>()
+    private val stateCaptor = argumentCaptor<InnerState>()
     private val onClickRetryCaptor = argumentCaptor<() -> Unit>()
-    private val onClickItemCaptor = argumentCaptor<(JokeUiModel) -> Unit>()
+    private val onClickItemCaptor = argumentCaptor<(Joke) -> Unit>()
     private val onCloseItemDetailsCaptor = argumentCaptor<() -> Unit>()
     private val onSwipeRefreshCaptor = argumentCaptor<() -> Unit>()
 
     @Before
     fun setup() {
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+
         given(
             mapper.transform(
                 state = stateCaptor.capture(),
@@ -40,6 +44,11 @@ class MainViewModelTest {
                 onSwipeRefresh = onSwipeRefreshCaptor.capture(),
             )
         ).willReturn(mock())
+    }
+
+    @After
+    fun teardown() {
+        RxAndroidPlugins.reset()
     }
 
     @Test
@@ -52,10 +61,10 @@ class MainViewModelTest {
 
         assertThat(viewModelStream.values().size).isEqualTo(2)
         assertThat(stateCaptor.allValues[0]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[1]).isEqualTo(
-            State(data = listOf(joke), loading = false, error = false, selected = null)
+            InnerState(data = listOf(joke), loading = false, error = false, selected = null)
         )
     }
 
@@ -68,10 +77,10 @@ class MainViewModelTest {
 
         assertThat(viewModelStream.values().size).isEqualTo(2)
         assertThat(stateCaptor.allValues[0]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[1]).isEqualTo(
-            State(data = emptyList(), loading = false, error = true, selected = null)
+            InnerState(data = emptyList(), loading = false, error = true, selected = null)
         )
     }
 
@@ -86,10 +95,10 @@ class MainViewModelTest {
 
         assertThat(viewModelStream.values().size).isEqualTo(4)
         assertThat(stateCaptor.allValues[2]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[3]).isEqualTo(
-            State(data = emptyList(), loading = false, error = true, selected = null)
+            InnerState(data = emptyList(), loading = false, error = true, selected = null)
         )
     }
 
@@ -105,10 +114,10 @@ class MainViewModelTest {
 
         assertThat(viewModelStream.values().size).isEqualTo(4)
         assertThat(stateCaptor.allValues[2]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[3]).isEqualTo(
-            State(data = listOf(joke), loading = false, error = false, selected = null)
+            InnerState(data = listOf(joke), loading = false, error = false, selected = null)
         )
     }
 
@@ -119,12 +128,11 @@ class MainViewModelTest {
 
         viewModel = MainViewModel(useCase, mapper)
         viewModelStream = viewModel.uiModel.test()
-        val selectedItem = JokeUiModel(joke = "Joke", setup = null, delivery = null, onClick = {})
-        onClickItemCaptor.allValues[1].invoke(selectedItem)
+        onClickItemCaptor.allValues[1].invoke(joke)
 
         assertThat(viewModelStream.values().size).isEqualTo(3)
         assertThat(stateCaptor.allValues[2]).isEqualTo(
-            State(data = listOf(joke), loading = false, error = false, selected = selectedItem)
+            InnerState(data = listOf(joke), loading = false, error = false, selected = joke)
         )
     }
 
@@ -135,13 +143,12 @@ class MainViewModelTest {
 
         viewModel = MainViewModel(useCase, mapper)
         viewModelStream = viewModel.uiModel.test()
-        val selectedItem = JokeUiModel(joke = "Joke", setup = null, delivery = null, onClick = {})
-        onClickItemCaptor.allValues[1].invoke(selectedItem)
+        onClickItemCaptor.allValues[1].invoke(joke)
         onCloseItemDetailsCaptor.allValues[2].invoke()
 
         assertThat(viewModelStream.values().size).isEqualTo(4)
         assertThat(stateCaptor.allValues[3]).isEqualTo(
-            State(data = listOf(joke), loading = false, error = false, selected = null)
+            InnerState(data = listOf(joke), loading = false, error = false, selected = null)
         )
     }
 
@@ -158,16 +165,16 @@ class MainViewModelTest {
 
         assertThat(viewModelStream.values().size).isEqualTo(4)
         assertThat(stateCaptor.allValues[0]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[1]).isEqualTo(
-            State(data = listOf(joke), loading = false, error = false, selected = null)
+            InnerState(data = listOf(joke), loading = false, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[2]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[3]).isEqualTo(
-            State(data = listOf(joke2), loading = false, error = false, selected = null)
+            InnerState(data = listOf(joke2), loading = false, error = false, selected = null)
         )
     }
 
@@ -183,16 +190,16 @@ class MainViewModelTest {
 
         assertThat(viewModelStream.values().size).isEqualTo(4)
         assertThat(stateCaptor.allValues[0]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[1]).isEqualTo(
-            State(data = listOf(joke), loading = false, error = false, selected = null)
+            InnerState(data = listOf(joke), loading = false, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[2]).isEqualTo(
-            State(data = emptyList(), loading = true, error = false, selected = null)
+            InnerState(data = emptyList(), loading = true, error = false, selected = null)
         )
         assertThat(stateCaptor.allValues[3]).isEqualTo(
-            State(data = emptyList(), loading = false, error = true, selected = null)
+            InnerState(data = emptyList(), loading = false, error = true, selected = null)
         )
     }
 }

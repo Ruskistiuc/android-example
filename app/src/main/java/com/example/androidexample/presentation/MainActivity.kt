@@ -25,8 +25,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidExampleTheme {
-                viewModel.uiModel.subscribeAsState(initial = null).value?.let { uiModel ->
-                    MainScreen(uiModel = uiModel)
+                viewModel.uiModel.subscribeAsState(initial = null).value?.let { screenState ->
+                    MainScreen(screenState = screenState)
                 }
             }
         }

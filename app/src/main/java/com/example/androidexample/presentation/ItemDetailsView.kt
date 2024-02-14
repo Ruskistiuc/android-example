@@ -11,7 +11,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.example.androidexample.presentation.models.JokeUiModel
+import com.example.androidexample.presentation.models.ScreenState.Details.JokeDetailsUiModel
 import com.example.androidexample.ui.theme.AndroidExampleTheme
 
 const val ITEM_DETAILS_VIEW_ITEM = "itemDetails"
@@ -29,22 +29,20 @@ const val ITEM_DETAILS_VIEW_BACK_BUTTON = "backButton"
 
 @Composable
 fun ItemDetailsView(
-    item: JokeUiModel,
-    onClose: () -> Unit
+    item: JokeDetailsUiModel,
+    onClose: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(text = "")
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(
                         onClick = onClose,
                         modifier = Modifier.testTag(ITEM_DETAILS_VIEW_BACK_BUTTON)
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -100,26 +98,25 @@ fun ItemDetailsView(
 @Composable
 @PreviewLightDark
 private fun ItemDetailsViewPreview(
-    @PreviewParameter(ItemDetailsViewPreviewParameterProvider::class) jokeUiModel: JokeUiModel
+    @PreviewParameter(ItemDetailsViewPreviewParameterProvider::class) jokeDetailsUiModel: JokeDetailsUiModel
 ) {
     AndroidExampleTheme {
-        ItemDetailsView(item = jokeUiModel, onClose = {})
+        ItemDetailsView(item = jokeDetailsUiModel, onClose = {})
     }
 }
 
-private class ItemDetailsViewPreviewParameterProvider : PreviewParameterProvider<JokeUiModel> {
+private class ItemDetailsViewPreviewParameterProvider :
+    PreviewParameterProvider<JokeDetailsUiModel> {
     override val values = sequenceOf(
-        JokeUiModel(
+        JokeDetailsUiModel(
             joke = null,
             setup = "Setup",
             delivery = "Delivery",
-            onClick = {}
         ),
-        JokeUiModel(
+        JokeDetailsUiModel(
             joke = "Joke",
             setup = null,
             delivery = null,
-            onClick = {}
-        )
+        ),
     )
 }

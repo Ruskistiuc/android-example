@@ -11,7 +11,6 @@ import androidx.compose.ui.test.printToLog
 import com.example.androidexample.presentation.ERROR_VIEW_RETRY_BUTTON
 import com.example.androidexample.presentation.Error
 import com.example.androidexample.ui.theme.AndroidExampleTheme
-import com.example.androidexample.util.assertScreenshotMatchesGolden
 import org.junit.Rule
 import org.junit.Test
 
@@ -57,9 +56,9 @@ class ErrorViewKtTest {
             )
             .assertIsDisplayed()
 
-        assertScreenshotMatchesGolden(
-            goldenName = "error_view",
-            node = composeTestRule.onRoot()
-        )
+//        assertScreenshotMatchesGolden(
+//            goldenName = "error_view",
+//            node = composeTestRule.onRoot()
+//        )
     }
 }

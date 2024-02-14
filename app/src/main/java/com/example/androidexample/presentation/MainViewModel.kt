@@ -1,68 +1,38 @@
 package com.example.androidexample.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.androidexample.domain.JokesUseCase
 import com.example.androidexample.domain.models.Joke
-import com.example.androidexample.presentation.mapper.MainUiModelMapper
-import com.example.androidexample.presentation.models.JokeUiModel
-import com.example.androidexample.presentation.models.MainUiModel
+import com.example.androidexample.presentation.mapper.ScreenStateMapper
+import com.example.androidexample.presentation.models.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
 
-/**
- * The parameters of an annotated constructor of a class are the dependencies of that class.
- * In this case, MainViewModel has useCase and mapper as dependencies.
- * Therefore, Hilt must also know how to provide the instance of
- * JokesUseCase and PresentationModelMapper.
- * */
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val useCase: JokesUseCase,
-    private val mapper: MainUiModelMapper
+    private val mapper: ScreenStateMapper,
 ) : ViewModel() {
 
-    companion object {
-        private const val TAG = "MainViewModel"
-    }
+    val uiModel: Observable<ScreenState>
 
-    val uiModel: Observable<MainUiModel>
+    private val events = PublishSubject.create<Event>()
+    private val states = BehaviorSubject.create<InnerState>()
 
-    private val events = BehaviorSubject.create<Event>()
-    private val states = BehaviorSubject.create<State>()
-
-    private val initialState = State(
+    private val initialState = InnerState(
         data = emptyList(),
         loading = false,
         error = false,
-        selected = null
+        selected = null,
     )
 
-    private val onClickRetry: () -> Unit = {
-        Log.i(TAG, "On click retry button was triggered")
-
-        events.onNext(Event.OnOpen)
-    }
-
-    private val onClickItem: (JokeUiModel) -> Unit = { item ->
-        Log.i(TAG, "On click item was triggered")
-
-        events.onNext(Event.OnClickItem(item))
-    }
-
-    private val onCloseItemDetails: () -> Unit = {
-        Log.i(TAG, "On close item details was triggered")
-
-        events.onNext(Event.OnCloseItemDetails)
-    }
-
-    private val onSwipeRefresh: () -> Unit = {
-        Log.i(TAG, "On swipe refresh was triggered")
-
-        events.onNext(Event.OnSwipeRefresh)
-    }
+    private val onClickRetry: () -> Unit = { events.onNext(Event.OnFetchData) }
+    private val onSwipeRefresh: () -> Unit = { events.onNext(Event.OnFetchData) }
+    private val onClickItem: (Joke) -> Unit = { events.onNext(Event.OnClickItem(it)) }
+    private val onCloseItemDetails: () -> Unit = { events.onNext(Event.OnCloseItemDetails) }
 
     init {
         uiModel = events
@@ -70,8 +40,8 @@ class MainViewModel @Inject constructor(
             .publish { publishedEvent ->
                 Observable.mergeArray(
                     publishedEvent.ofType(Event.OnOpen::class.java)
-                        .withLatestFrom(states.startWithItem(initialState)) { _, state -> state }
-                        .switchMap { state ->
+                        .withLatestFrom(states.startWithItem(initialState), ::Pair)
+                        .switchMap { (_, state) ->
                             if (state.data.isEmpty()) {
                                 getData(state)
                             } else {
@@ -79,17 +49,17 @@ class MainViewModel @Inject constructor(
                             }
                         },
 
+                    publishedEvent.ofType(Event.OnFetchData::class.java)
+                        .withLatestFrom(states, ::Pair)
+                        .switchMap { (_, state) -> getData(state) },
+
                     publishedEvent.ofType(Event.OnClickItem::class.java)
-                        .withLatestFrom(states) { event, state -> event to state }
+                        .withLatestFrom(states, ::Pair)
                         .map { (event, state) -> state.selected(event.item) },
 
                     publishedEvent.ofType(Event.OnCloseItemDetails::class.java)
-                        .withLatestFrom(states) { _, state -> state }
-                        .map { state -> state.unselect() },
-
-                    publishedEvent.ofType(Event.OnSwipeRefresh::class.java)
-                        .withLatestFrom(states) { _, state -> state }
-                        .switchMap { state -> getData(state) }
+                        .withLatestFrom(states, ::Pair)
+                        .map { (_, state) -> state.unselect() },
                 )
             }
             .doOnNext { state -> states.onNext(state) }
@@ -104,34 +74,26 @@ class MainViewModel @Inject constructor(
             }
     }
 
-    private fun getData(state: State): Observable<State> {
+    private fun getData(state: InnerState): Observable<InnerState> {
         return useCase.getData()
             .toObservable()
-            .map { data ->
-                Log.i(TAG, "Event.OnOpen: Data fetched successfully")
-
-                state.setData(data)
-            }
+            .map { data -> state.setData(data) }
             .startWithItem(state.loading())
-            .onErrorReturn { error ->
-                Log.e(TAG, "Event.OnOpen: Failed to fetch the data: $error")
-
-                state.error()
-            }
+            .onErrorReturn { state.error() }
     }
 
     sealed class Event {
         object OnOpen : Event()
-        data class OnClickItem(val item: JokeUiModel) : Event()
+        object OnFetchData : Event()
+        data class OnClickItem(val item: Joke) : Event()
         object OnCloseItemDetails : Event()
-        object OnSwipeRefresh : Event()
     }
 
-    data class State(
+    data class InnerState(
         val data: List<Joke>,
         val loading: Boolean,
         val error: Boolean,
-        val selected: JokeUiModel?
+        val selected: Joke?
     ) {
         fun setData(data: List<Joke>) = this.copy(
             data = data, loading = false, error = false, selected = null
@@ -145,7 +107,8 @@ class MainViewModel @Inject constructor(
             data = emptyList(), loading = false, error = true, selected = null
         )
 
-        fun selected(item: JokeUiModel) = this.copy(selected = item)
+        fun selected(item: Joke) = this.copy(selected = item)
+
         fun unselect() = this.copy(selected = null)
     }
 }
