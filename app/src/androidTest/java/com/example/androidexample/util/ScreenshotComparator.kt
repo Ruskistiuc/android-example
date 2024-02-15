@@ -39,14 +39,15 @@ fun assertScreenshotMatchesGolden(
     goldenName: String,
     node: SemanticsNodeInteraction
 ) {
+    val filename = "Pixel3a-$goldenName.png"
     val bitmap = node.captureToImage().asAndroidBitmap()
 
     // Save screenshot to file for debugging
     // If each run a different name is required: System.currentTimeMillis().toString()
-    saveScreenshot(goldenName, bitmap)
+    saveScreenshot(filename, bitmap)
 
     val golden = InstrumentationRegistry.getInstrumentation()
-        .context.resources.assets.open("$goldenName.png")
+        .context.resources.assets.open(filename)
         .use { BitmapFactory.decodeStream(it) }
 
     golden.compare(bitmap)
@@ -56,7 +57,7 @@ private fun saveScreenshot(filename: String, bmp: Bitmap) {
     val path = InstrumentationRegistry.getInstrumentation()
         .targetContext.filesDir.canonicalPath
 
-    FileOutputStream("$path/$filename.png").use { out ->
+    FileOutputStream("$path/$filename").use { out ->
         bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.ui.test.printToLog
 import com.example.androidexample.presentation.ERROR_VIEW_RETRY_BUTTON
 import com.example.androidexample.presentation.Error
 import com.example.androidexample.ui.theme.AndroidExampleTheme
+import com.example.androidexample.util.assertScreenshotMatchesGolden
 import org.junit.Rule
 import org.junit.Test
 
@@ -28,11 +29,7 @@ class ErrorViewKtTest {
 
     @Test
     fun errorView() {
-        composeTestRule.setContent {
-            AndroidExampleTheme {
-                Error(onClickRetry = {})
-            }
-        }
+        composeTestRule.setContent { AndroidExampleTheme { Error(onClickRetry = {}) } }
 
         /**
          * Print the Semantics tree of the Error View
@@ -40,7 +37,8 @@ class ErrorViewKtTest {
          * useUnmergedTree = true - get the complete tree
          * useUnmergedTree = false - get simplified tree
          */
-        composeTestRule.onRoot(useUnmergedTree = true)
+        composeTestRule
+            .onRoot(useUnmergedTree = true)
             .printToLog("ErrorViewSemanticsTree")
 
         /**
@@ -49,16 +47,9 @@ class ErrorViewKtTest {
          */
         composeTestRule
             .onNodeWithTag(ERROR_VIEW_RETRY_BUTTON)
-            .assert(
-                hasText("Retry").and(
-                    hasClickAction()
-                )
-            )
+            .assert(hasText("Retry").and(hasClickAction()))
             .assertIsDisplayed()
 
-//        assertScreenshotMatchesGolden(
-//            goldenName = "error_view",
-//            node = composeTestRule.onRoot()
-//        )
+        assertScreenshotMatchesGolden(goldenName = "error_view", node = composeTestRule.onRoot())
     }
 }
