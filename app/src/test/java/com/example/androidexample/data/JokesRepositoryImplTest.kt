@@ -4,7 +4,11 @@ import com.example.androidexample.data.mapper.ResponseMapper
 import com.example.androidexample.data.models.JokeEntity
 import com.example.androidexample.data.models.Response
 import com.example.androidexample.domain.models.Joke
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import io.reactivex.rxjava3.schedulers.Schedulers
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.kotlin.mock
@@ -15,12 +19,22 @@ class JokesRepositoryImplTest {
     private val mapper = mock<ResponseMapper>()
     private val repository = JokesRepositoryImpl(service, mapper)
 
+    @Before
+    fun setup() {
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
+    }
+
+    @After
+    fun teardown() {
+        RxJavaPlugins.reset()
+    }
+
     @Test
     fun `GIVEN repository WHEN data requested successfully THEN transformed data should be returned`() {
         val response = Response(
             jokes = listOf(JokeEntity(joke = "Joke", setup = null, delivery = null))
         )
-        given(service.getData()).willReturn(Observable.just(response))
+        given(service.getData()).willReturn(Single.just(response))
         val jokes = listOf(Joke(joke = "Joke", setup = null, delivery = null))
         given(mapper.transform(response)).willReturn(jokes)
 
@@ -32,7 +46,7 @@ class JokesRepositoryImplTest {
 
     @Test
     fun `GIVEN repository WHEN data requested with error THEN should throw an exception`() {
-        given(service.getData()).willReturn(Observable.error(Exception()))
+        given(service.getData()).willReturn(Single.error(Exception()))
 
         repository
             .getData()

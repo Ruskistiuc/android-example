@@ -4,6 +4,7 @@ import com.example.androidexample.data.mapper.ResponseMapper
 import com.example.androidexample.domain.JokesRepository
 import com.example.androidexample.domain.models.Joke
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class JokesRepositoryImpl @Inject constructor(
@@ -12,8 +13,9 @@ class JokesRepositoryImpl @Inject constructor(
 ) : JokesRepository {
 
     override fun getData(): Single<List<Joke>> {
-        return service.getData()
-            .singleOrError()
-            .map { response -> mapper.transform(response) }
+        return service
+            .getData()
+            .subscribeOn(Schedulers.io())
+            .map { mapper.transform(it) }
     }
 }
