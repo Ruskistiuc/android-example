@@ -50,7 +50,7 @@ android {
          * Compatibility map of the library that matches the project’s Kotlin version
          * https://developer.android.com/jetpack/androidx/releases/compose-kotlin
          * */
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     packaging {
