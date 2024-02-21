@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.android.junit5)
     id("kotlin-kapt")
 }
 
@@ -78,7 +79,9 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
 
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    kapt(libs.hilt.compiler)
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
@@ -94,11 +97,17 @@ dependencies {
 
     testImplementation(libs.assertj.joda.time)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+
+    androidTestImplementation(libs.junit.jupiter.api)
+    androidTestImplementation(libs.android.test.compose)
+
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    androidTestImplementation(libs.ui.test.junit)
     debugImplementation(libs.ui.test.manifest)
 
     debugImplementation(libs.ui.tooling)

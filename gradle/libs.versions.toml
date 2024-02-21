@@ -4,18 +4,20 @@ coreKtx = "1.12.0"
 activityCompose = "1.8.2"
 lifecycleRuntimeKtx = "2.7.0"
 swipeRefresh = "0.24.9-beta"
-hiltAndroid = "2.50"
+hilt = "2.50"
 retrofit = "2.9.0"
 rxjava = "3.0.0"
 mockito = "5.5.0"
 mockitoKotlin = "3.2.0"
 assertjJodaTime = "2.2.0"
-junit = "4.13.2"
 extJunit = "1.1.5"
 espressoCore = "3.5.1"
+junitJupiter = "5.10.2"
+androidTestCompose = "1.4.0"
 androidGradlePlugin = "8.2.2"
 kotlinAndroidPlugin = "1.9.10"
 ktlintPlugin = "10.3.0"
+androidJunit5Plugin = "1.10.0.0"
 
 [libraries]
 # BOM to library version mapping
@@ -33,8 +35,9 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 accompanist-swiperefresh = { group = "com.google.accompanist", name = "accompanist-swiperefresh", version.ref = "swipeRefresh" }
 
 # Dagger - Hilt
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 
 # Retrofit
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
@@ -55,13 +58,16 @@ mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", versio
 # AssertJ
 assertj-joda-time = { group = "org.assertj", name = "assertj-joda-time", version.ref = "assertjJodaTime" }
 
-junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junitJupiter" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junitJupiter" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junitJupiter" }
+android-test-compose = { group = "de.mannodermaus.junit5", name = "android-test-compose", version.ref = "androidTestCompose" }
+
 # UI Tests
-# Test rules and transitive dependencies
-ui-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 # Needed for createComposeRule, but not createAndroidComposeRule
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -71,4 +77,5 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAndroidPlugin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
+dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
