@@ -3,11 +3,12 @@ package com.example.androidexample.presentation.mapper
 import com.example.androidexample.domain.models.Joke
 import com.example.androidexample.presentation.MainViewModel.InnerState
 import com.example.androidexample.presentation.models.ScreenState
-import com.example.androidexample.presentation.models.ScreenState.Details.JokeDetailsUiModel
 import com.example.androidexample.presentation.models.ScreenState.Loaded.JokeUiModel
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
@@ -19,7 +20,7 @@ class ScreenStateMapperTest {
         data = emptyList(),
         loading = false,
         error = false,
-        selected = null
+        selected = null,
     )
     private val joke = Joke(joke = "Joke", setup = null, delivery = null)
 
@@ -28,97 +29,113 @@ class ScreenStateMapperTest {
         assertThat(transform(state.copy(loading = true))).isEqualTo(ScreenState.Loading)
     }
 
-    @Test
-    fun `GIVEN mapper WHEN state is on error THEN should return error screen state`() {
-        val onClickRetry = mock<() -> Unit>()
+    @Nested
+    inner class OnError {
 
-        val mapped = transform(state = state.copy(error = true), onClickRetry = onClickRetry)
+        private val onClickRetry = mock<() -> Unit>()
+        private lateinit var mapped: ScreenState
 
-        assertThat(mapped).isEqualTo(ScreenState.Error(onClickRetry))
+        @BeforeEach
+        fun setup() {
+            mapped = transform(state = state.copy(error = true), onClickRetry = onClickRetry)
+        }
+
+        @Test
+        fun `GIVEN mapper WHEN state is on error THEN should return error screen state`() {
+            assertThat(mapped).isEqualTo(ScreenState.Error(onClickRetry))
+        }
+
+        @Test
+        fun `GIVEN mapper WHEN on retry is called THEN should call the passed on click retry`() {
+            (mapped as ScreenState.Error).onRetry()
+
+            verify(onClickRetry).invoke()
+        }
     }
 
-    @Test
-    fun `GIVEN mapper WHEN on retry is called THEN should call the passed on click retry`() {
-        val onClickRetry = mock<() -> Unit>()
+    @Nested
+    inner class OnItemSelected {
 
-        val mapped = transform(state = state.copy(error = true), onClickRetry = onClickRetry)
-        (mapped as ScreenState.Error).onRetry()
+        private val onCloseItemDetails = mock<() -> Unit>()
+        private lateinit var mapped: ScreenState
 
-        verify(onClickRetry).invoke()
-    }
-
-    @Test
-    fun `GIVEN mapper WHEN state has selected item THEN should return details screen state`() {
-        val onCloseItemDetails = mock<() -> Unit>()
-
-        val mapped = transform(
-            state = state.copy(selected = joke),
-            onCloseItemDetails = onCloseItemDetails,
-        )
-
-        assertThat(mapped).isEqualTo(
-            ScreenState.Details(
-                item = JokeDetailsUiModel(joke = "Joke", setup = null, delivery = null),
-                onClose = onCloseItemDetails,
+        @BeforeEach
+        fun setup() {
+            mapped = transform(
+                state = state.copy(selected = joke),
+                onCloseItemDetails = onCloseItemDetails,
             )
-        )
-    }
+        }
 
-    @Test
-    fun `GIVEN mapper WHEN on close is called THEN should call the passed on close item details`() {
-        val onCloseItemDetails = mock<() -> Unit>()
-
-        val mapped = transform(
-            state = state.copy(selected = joke),
-            onCloseItemDetails = onCloseItemDetails,
-        )
-        (mapped as ScreenState.Details).onClose()
-
-        verify(onCloseItemDetails).invoke()
-    }
-
-    @Test
-    fun `GIVEN mapper WHEN state has data THEN should return loaded screen state`() {
-        val onClickItem = mock<(Joke) -> Unit>()
-
-        val mapped = transform(
-            state = state.copy(data = arrayListOf(joke)),
-            onClickItem = onClickItem,
-        )
-
-        assertThat((mapped as ScreenState.Loaded).items)
-            .usingRecursiveComparison()
-            .withStrictTypeChecking()
-            .ignoringFields(JokeUiModel::onClick.name)
-            .isEqualTo(
-                arrayListOf(JokeUiModel(joke = "Joke", setup = null, delivery = null, onClick = {}))
+        @Test
+        fun `GIVEN mapper WHEN state has selected item THEN should return details screen state`() {
+            assertThat(mapped).isEqualTo(
+                ScreenState.Details(
+                    item = ScreenState.Details.JokeDetailsUiModel(
+                        joke = "Joke",
+                        setup = null,
+                        delivery = null,
+                    ),
+                    onClose = onCloseItemDetails,
+                )
             )
+        }
+
+        @Test
+        fun `GIVEN mapper WHEN on close is called THEN should call the passed on close item details`() {
+            (mapped as ScreenState.Details).onClose()
+
+            verify(onCloseItemDetails).invoke()
+        }
     }
 
-    @Test
-    fun `GIVEN mapper WHEN on click item is called THEN should call the passed on click item with item`() {
-        val onClickItem = mock<(Joke) -> Unit>()
+    @Nested
+    inner class OnLoaded {
 
-        val mapped = transform(
-            state = state.copy(data = listOf(joke)),
-            onClickItem = onClickItem,
-        )
-        (mapped as ScreenState.Loaded).items[0].onClick()
+        private val onClickItem = mock<(Joke) -> Unit>()
+        private val onSwipeRefresh = mock<() -> Unit>()
+        private lateinit var mapped: ScreenState
 
-        verify(onClickItem).invoke(joke)
-    }
+        @BeforeEach
+        fun setup() {
+            mapped = transform(
+                state = state.copy(data = arrayListOf(joke)),
+                onClickItem = onClickItem,
+                onSwipeRefresh = onSwipeRefresh,
+            )
+        }
 
-    @Test
-    fun `GIVEN mapper WHEN on swipe refresh is called THEN should call the passed on swipe refresh`() {
-        val onSwipeRefresh = mock<() -> Unit>()
+        @Test
+        fun `GIVEN mapper WHEN state has data THEN should return loaded screen state`() {
+            assertThat((mapped as ScreenState.Loaded).items)
+                .usingRecursiveComparison()
+                .withStrictTypeChecking()
+                .ignoringFields(JokeUiModel::onClick.name)
+                .isEqualTo(
+                    arrayListOf(
+                        JokeUiModel(
+                            joke = "Joke",
+                            setup = null,
+                            delivery = null,
+                            onClick = {},
+                        )
+                    )
+                )
+        }
 
-        val mapped = transform(
-            state = state.copy(data = listOf(joke)),
-            onSwipeRefresh = onSwipeRefresh,
-        )
-        (mapped as ScreenState.Loaded).onSwipeRefresh()
+        @Test
+        fun `GIVEN mapper WHEN on click item is called THEN should call the passed on click item with item`() {
+            (mapped as ScreenState.Loaded).items[0].onClick()
 
-        verify(onSwipeRefresh).invoke()
+            verify(onClickItem).invoke(joke)
+        }
+
+        @Test
+        fun `GIVEN mapper WHEN on swipe refresh is called THEN should call the passed on swipe refresh`() {
+            (mapped as ScreenState.Loaded).onSwipeRefresh()
+
+            verify(onSwipeRefresh).invoke()
+        }
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.example.androidexample.domain
 
 import com.example.androidexample.domain.models.Joke
 import io.reactivex.rxjava3.core.Single
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.given
 import org.mockito.kotlin.mock
 

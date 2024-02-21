@@ -7,9 +7,9 @@ import com.example.androidexample.domain.models.Joke
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import io.reactivex.rxjava3.schedulers.Schedulers
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.kotlin.mock
 
@@ -19,12 +19,12 @@ class JokesRepositoryImplTest {
     private val mapper = mock<ResponseMapper>()
     private val repository = JokesRepositoryImpl(service, mapper)
 
-    @Before
+    @BeforeEach
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
     }
 
-    @After
+    @AfterEach
     fun teardown() {
         RxJavaPlugins.reset()
     }
