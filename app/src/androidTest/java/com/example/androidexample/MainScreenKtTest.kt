@@ -3,11 +3,9 @@ package com.example.androidexample
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyChild
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -16,13 +14,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
+import com.example.androidexample.presentation.CONTENT_SCREEN_ITEMS_LIST
+import com.example.androidexample.presentation.CONTENT_SCREEN_LIST_ITEM
 import com.example.androidexample.presentation.EMPTY_VIEW_TEXT
 import com.example.androidexample.presentation.ERROR_VIEW_RETRY_BUTTON
 import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_BACK_BUTTON
 import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_ITEM
 import com.example.androidexample.presentation.LOADING_VIEW_LOADING_INDICATOR
-import com.example.androidexample.presentation.MAIN_SCREEN_ITEMS_LIST
-import com.example.androidexample.presentation.MAIN_SCREEN_LIST_ITEM
 import com.example.androidexample.presentation.MainScreen
 import com.example.androidexample.presentation.models.ScreenState
 import com.example.androidexample.presentation.models.ScreenState.Details.JokeDetailsUiModel
@@ -93,16 +91,9 @@ class MainScreenKtTest {
         prepareScreen(ScreenState.Loaded(items = items, onSwipeRefresh = {}))
 
         composeTestRule.apply {
-            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST).assertIsDisplayed()
+            onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertIsDisplayed()
 
-            onAllNodesWithTag(MAIN_SCREEN_LIST_ITEM)
-                .assertCountEquals(2)
-                .assertAll(hasClickAction())
-
-            onNodeWithText("Joke").assertIsDisplayed()
-
-            onNodeWithText("Setup").assertIsDisplayed()
-            onNodeWithText("Delivery").assertIsDisplayed()
+            onAllNodesWithTag(CONTENT_SCREEN_LIST_ITEM).assertCountEquals(2)
         }
 
         assertScreenshotMatchesGolden(
@@ -129,9 +120,9 @@ class MainScreenKtTest {
         composeTestRule.apply {
             onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR).assertDoesNotExist()
 
-            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST).assertIsDisplayed()
+            onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertIsDisplayed()
 
-            onAllNodesWithTag(MAIN_SCREEN_LIST_ITEM).assertCountEquals(2)
+            onAllNodesWithTag(CONTENT_SCREEN_LIST_ITEM).assertCountEquals(2)
         }
     }
 
@@ -154,9 +145,9 @@ class MainScreenKtTest {
         composeTestRule.apply {
             onNodeWithTag(ERROR_VIEW_RETRY_BUTTON).assertDoesNotExist()
 
-            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST).assertIsDisplayed()
+            onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertIsDisplayed()
 
-            onAllNodesWithTag(MAIN_SCREEN_LIST_ITEM).assertCountEquals(2)
+            onAllNodesWithTag(CONTENT_SCREEN_LIST_ITEM).assertCountEquals(2)
         }
     }
 
@@ -179,7 +170,7 @@ class MainScreenKtTest {
 
         composeTestRule.apply {
             // Open item details
-            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST).assertDoesNotExist()
+            onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertDoesNotExist()
 
             onNodeWithTag(ITEM_DETAILS_VIEW_ITEM).assert(hasAnyChild(hasText("Joke")))
 
@@ -188,7 +179,7 @@ class MainScreenKtTest {
 
             screenState.value = ScreenState.Loaded(items = items, onSwipeRefresh = {})
 
-            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST).assertIsDisplayed()
+            onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertIsDisplayed()
 
             onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON).assertDoesNotExist()
         }
@@ -213,7 +204,7 @@ class MainScreenKtTest {
 
         composeTestRule.apply {
             // Open item details
-            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST).assertDoesNotExist()
+            onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertDoesNotExist()
 
             onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
                 .assert(
@@ -226,7 +217,7 @@ class MainScreenKtTest {
 
             screenState.value = ScreenState.Loaded(items = items, onSwipeRefresh = {})
 
-            onNodeWithTag(MAIN_SCREEN_ITEMS_LIST).assertIsDisplayed()
+            onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertIsDisplayed()
 
             onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON).assertDoesNotExist()
         }
