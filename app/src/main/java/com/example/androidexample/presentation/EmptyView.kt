@@ -22,7 +22,7 @@ fun Empty() {
         contentAlignment = Alignment.Center,
         content = {
             Text(
-                text = stringResource(id = R.string.empty_view),
+                text = stringResource(id = R.string.empty_view_title),
                 style = AndroidExampleTheme.typography.h4,
                 modifier = Modifier.testTag(EMPTY_VIEW_TEXT),
             )
