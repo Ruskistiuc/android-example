@@ -17,6 +17,7 @@ androidGradlePlugin = "8.2.2"
 kotlinAndroidPlugin = "1.9.10"
 ktlintPlugin = "10.3.0"
 androidJunit5Plugin = "1.10.0.0"
+kspPlugin = "1.9.10-1.0.13"
 
 [libraries]
 # BOM to library version mapping
@@ -77,3 +78,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAnd
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5Plugin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }

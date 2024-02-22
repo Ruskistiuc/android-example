@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.android.junit5)
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -79,9 +79,9 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
 
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     testImplementation(libs.hilt.android.testing)
-    kaptTest(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
@@ -110,9 +110,4 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
     debugImplementation(libs.ui.tooling)
-}
-
-// Allow references to generated code
-kapt {
-    correctErrorTypes = true
 }
