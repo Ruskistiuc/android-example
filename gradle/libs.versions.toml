@@ -7,7 +7,6 @@ swipeRefresh = "0.24.9-beta"
 hilt = "2.50"
 retrofit = "2.9.0"
 rxjava = "3.0.0"
-mockito = "5.5.0"
 mockitoKotlin = "3.2.0"
 assertjJodaTime = "2.2.0"
 extJunit = "1.1.5"
@@ -52,7 +51,6 @@ runtime-rxjava = { group = "androidx.compose.runtime", name = "runtime-rxjava3" 
 rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxjava" }
 
 # Mockito
-mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 
 # AssertJ

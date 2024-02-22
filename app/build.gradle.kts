@@ -92,7 +92,6 @@ dependencies {
 
     implementation(libs.rxandroid)
 
-    testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
 
     testImplementation(libs.assertj.joda.time)
