@@ -8,14 +8,6 @@ import androidx.compose.runtime.rxjava3.subscribeAsState
 import com.example.androidexample.ui.theme.AndroidExampleTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-/**
- * Once Hilt is set up in your Application class and an application-level
- * component is available, Hilt can provide dependencies to other Android
- * classes that have the @AndroidEntryPoint annotation.
- *
- * @AndroidEntryPoint generates an individual Hilt component for each
- * Android class in your project.
- * */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

@@ -104,7 +104,6 @@ class MainScreenKtTest {
 
     @Test
     fun mainScreen_loading_and_items() {
-        // States that can cause recompositions
         val screenState = mutableStateOf<ScreenState>(ScreenState.Loading)
 
         prepareMutableScreen(screenState)
@@ -113,10 +112,8 @@ class MainScreenKtTest {
             .onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR)
             .assertIsDisplayed()
 
-        // The states are changed, but there is no recomposition
         screenState.value = ScreenState.Loaded(items = items, onSwipeRefresh = {})
 
-        // Assertions triggers recomposition
         composeTestRule.apply {
             onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR).assertDoesNotExist()
 
@@ -128,7 +125,6 @@ class MainScreenKtTest {
 
     @Test
     fun mainScreen_error_retry_and_items() {
-        // States that can cause recompositions
         val screenState = mutableStateOf<ScreenState>(ScreenState.Error(onRetry = {}))
 
         prepareMutableScreen(screenState)
@@ -138,10 +134,8 @@ class MainScreenKtTest {
             .assertIsDisplayed()
             .performClick()
 
-        // The states are changed, but there is no recomposition
         screenState.value = ScreenState.Loaded(items = items, onSwipeRefresh = {})
 
-        // Assertions triggers recomposition
         composeTestRule.apply {
             onNodeWithTag(ERROR_VIEW_RETRY_BUTTON).assertDoesNotExist()
 
@@ -169,12 +163,10 @@ class MainScreenKtTest {
         )
 
         composeTestRule.apply {
-            // Open item details
             onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertDoesNotExist()
 
             onNodeWithTag(ITEM_DETAILS_VIEW_ITEM).assert(hasAnyChild(hasText("Joke")))
 
-            // close item details using toolbar
             onNodeWithTag(ITEM_DETAILS_VIEW_BACK_BUTTON).performClick()
 
             screenState.value = ScreenState.Loaded(items = items, onSwipeRefresh = {})
@@ -203,7 +195,6 @@ class MainScreenKtTest {
         )
 
         composeTestRule.apply {
-            // Open item details
             onNodeWithTag(CONTENT_SCREEN_ITEMS_LIST).assertDoesNotExist()
 
             onNodeWithTag(ITEM_DETAILS_VIEW_ITEM)
@@ -212,7 +203,6 @@ class MainScreenKtTest {
                         .and(hasAnyChild(hasText("Delivery")))
                 )
 
-            // close item details using physical back
             Espresso.pressBack()
 
             screenState.value = ScreenState.Loaded(items = items, onSwipeRefresh = {})

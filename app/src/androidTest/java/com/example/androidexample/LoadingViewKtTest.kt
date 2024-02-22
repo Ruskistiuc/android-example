@@ -18,13 +18,11 @@ class LoadingViewKtTest {
 
     @Test
     fun loadingView() {
-        // Start with a paused clock
         composeTestRule.mainClock.autoAdvance = false
 
         composeTestRule.setContent { AndroidExampleTheme { Loading() } }
 
         composeTestRule.apply {
-            // Advance clock (keeping it paused)
             mainClock.advanceTimeBy(1000)
 
             onNodeWithTag(LOADING_VIEW_LOADING_INDICATOR).assertIsDisplayed()

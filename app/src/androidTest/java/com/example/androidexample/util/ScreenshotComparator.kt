@@ -42,8 +42,6 @@ fun assertScreenshotMatchesGolden(
     val filename = "Pixel3a-$goldenName.png"
     val bitmap = node.captureToImage().asAndroidBitmap()
 
-    // Save screenshot to file for debugging
-    // If each run a different name is required: System.currentTimeMillis().toString()
     saveScreenshot(filename, bitmap)
 
     val golden = InstrumentationRegistry.getInstrumentation()
@@ -79,9 +77,7 @@ private fun Bitmap.compare(other: Bitmap) {
         other.getRow(row2, column)
 
         if (!row1.contentEquals(row2)) {
-            throw AssertionError(
-                "Sizes match but bitmap content has differences"
-            )
+            throw AssertionError("Sizes match but bitmap content has differences")
         }
     }
 }
