@@ -30,7 +30,9 @@ class ScreenStateMapper @Inject constructor() {
                 onClose = onCloseItemDetails,
             )
 
-            state.data.isNotEmpty() -> ScreenState.Loaded(
+            state.data.isEmpty() -> ScreenState.Empty
+
+            else -> ScreenState.Loaded(
                 items = state.data.map { item ->
                     JokeUiModel(
                         joke = item.joke,
@@ -41,8 +43,6 @@ class ScreenStateMapper @Inject constructor() {
                 },
                 onSwipeRefresh = onSwipeRefresh,
             )
-
-            else -> throw IllegalStateException("Empty state: not implemented")
         }
     }
 }

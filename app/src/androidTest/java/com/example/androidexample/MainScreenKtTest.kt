@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
+import com.example.androidexample.presentation.EMPTY_VIEW_TEXT
 import com.example.androidexample.presentation.ERROR_VIEW_RETRY_BUTTON
 import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_BACK_BUTTON
 import com.example.androidexample.presentation.ITEM_DETAILS_VIEW_ITEM
@@ -69,6 +70,20 @@ class MainScreenKtTest {
 
         assertScreenshotMatchesGolden(
             goldenName = "main_screen_error",
+            node = composeTestRule.onRoot(),
+        )
+    }
+
+    @Test
+    fun mainScreen_empty() {
+        prepareScreen(ScreenState.Empty)
+
+        composeTestRule
+            .onNodeWithTag(EMPTY_VIEW_TEXT)
+            .assertIsDisplayed()
+
+        assertScreenshotMatchesGolden(
+            goldenName = "main_screen_empty",
             node = composeTestRule.onRoot(),
         )
     }

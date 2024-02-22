@@ -37,6 +37,8 @@ fun MainScreen(screenState: ScreenState) {
 
             is ScreenState.Details -> ItemDetailsView(screenState.item, screenState.onClose)
 
+            ScreenState.Empty -> Empty()
+
             is ScreenState.Loaded -> SwipeRefresh(
                 state = rememberSwipeRefreshState(isRefreshing = false),
                 onRefresh = screenState.onSwipeRefresh,

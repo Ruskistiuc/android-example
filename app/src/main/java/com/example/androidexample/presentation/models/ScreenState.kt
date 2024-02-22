@@ -2,9 +2,11 @@ package com.example.androidexample.presentation.models
 
 sealed interface ScreenState {
 
-    object Loading : ScreenState
+    data object Loading : ScreenState
 
     data class Error(val onRetry: () -> Unit) : ScreenState
+
+    data object Empty : ScreenState
 
     data class Loaded(
         val items: List<JokeUiModel>,

@@ -5,7 +5,6 @@ import com.example.androidexample.presentation.MainViewModel.InnerState
 import com.example.androidexample.presentation.models.ScreenState
 import com.example.androidexample.presentation.models.ScreenState.Loaded.JokeUiModel
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -89,6 +88,11 @@ class ScreenStateMapperTest {
         }
     }
 
+    @Test
+    fun `GIVEN mapper WHEN state has no data THEN should return empty screen state`() {
+        assertThat(transform(state)).isEqualTo(ScreenState.Empty)
+    }
+
     @Nested
     inner class OnLoaded {
 
@@ -136,11 +140,6 @@ class ScreenStateMapperTest {
 
             verify(onSwipeRefresh).invoke()
         }
-    }
-
-    @Test
-    fun `GIVEN mapper WHEN state has no data THEN should throw an exception`() {
-        assertThatThrownBy { transform(state) }.isInstanceOf(IllegalStateException::class.java)
     }
 
     private fun transform(
