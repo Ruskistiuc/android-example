@@ -14,7 +14,5 @@ abstract class UseCaseModule {
 
     @ViewModelScoped
     @Binds
-    abstract fun bindJokesUseCase(
-        useCase: JokesUseCaseImpl
-    ): JokesUseCase
+    abstract fun bindJokesUseCase(useCase: JokesUseCaseImpl): JokesUseCase
 }

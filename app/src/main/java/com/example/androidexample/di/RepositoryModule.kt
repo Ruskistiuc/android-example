@@ -14,7 +14,5 @@ abstract class RepositoryModule {
 
     @ViewModelScoped
     @Binds
-    abstract fun bindJokesRepository(
-        repository: JokesRepositoryImpl
-    ): JokesRepository
+    abstract fun bindJokesRepository(repository: JokesRepositoryImpl): JokesRepository
 }
