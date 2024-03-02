@@ -5,9 +5,12 @@ import com.example.androidexample.domain.models.Joke
 import com.example.androidexample.presentation.MainViewModel.InnerState
 import com.example.androidexample.presentation.mapper.ScreenStateMapper
 import com.example.androidexample.presentation.models.ScreenState
+import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.TestObserver
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -31,6 +34,8 @@ class MainViewModelTest {
 
     @BeforeEach
     fun setup() {
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+
         given(
             mapper.transform(
                 state = stateCaptor.capture(),
@@ -40,6 +45,11 @@ class MainViewModelTest {
                 onSwipeRefresh = onSwipeRefreshCaptor.capture(),
             )
         ).willReturn(mock())
+    }
+
+    @AfterEach
+    fun teardown() {
+        RxAndroidPlugins.reset()
     }
 
     @Nested

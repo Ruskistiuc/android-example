@@ -5,10 +5,6 @@ import com.example.androidexample.data.models.JokeEntity
 import com.example.androidexample.data.models.Response
 import com.example.androidexample.domain.models.Joke
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.plugins.RxJavaPlugins
-import io.reactivex.rxjava3.schedulers.Schedulers
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.kotlin.mock
@@ -18,16 +14,6 @@ class JokesRepositoryImplTest {
     private val service = mock<JokesService>()
     private val mapper = mock<ResponseMapper>()
     private val repository = JokesRepositoryImpl(service, mapper)
-
-    @BeforeEach
-    fun setup() {
-        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-    }
-
-    @AfterEach
-    fun teardown() {
-        RxJavaPlugins.reset()
-    }
 
     @Test
     fun `GIVEN repository WHEN data requested successfully THEN transformed data should be returned`() {

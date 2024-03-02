@@ -6,6 +6,7 @@ import com.example.androidexample.domain.models.Joke
 import com.example.androidexample.presentation.mapper.ScreenStateMapper
 import com.example.androidexample.presentation.models.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -77,7 +78,8 @@ class MainViewModel @Inject constructor(
     private fun getData(state: InnerState): Observable<InnerState> {
         return useCase.getData()
             .toObservable()
-            .map { data -> state.setData(data) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { state.setData(it) }
             .startWithItem(state.loading())
             .onErrorReturn { state.error() }
     }
