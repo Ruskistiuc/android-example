@@ -9,6 +9,7 @@ retrofit = "2.9.0"
 rxjava = "3.0.0"
 kotlinCompiler = "1.5.3"
 mockitoKotlin = "3.2.0"
+mockito = "5.5.0"
 assertjJodaTime = "2.2.0"
 extJunit = "1.1.5"
 espressoCore = "3.5.1"
@@ -53,6 +54,7 @@ runtime-rxjava = { group = "androidx.compose.runtime", name = "runtime-rxjava3" 
 rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxjava" }
 
 # Mockito
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 
 # AssertJ
